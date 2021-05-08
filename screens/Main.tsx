@@ -2,10 +2,13 @@ import { Alert, AlertButton, StyleSheet, View } from "react-native";
 import React, { useCallback } from "react";
 
 import { MainMenu as AppMainMenu } from "../components/app";
+import { Slider as NotificationSlider } from "../components/notifications";
 import { StatusBar } from "expo-status-bar";
 import { useNavigation } from "@react-navigation/native";
+import { useStore } from "../hooks";
 
 function Main() {
+  const { store } = useStore();
   const navigation = useNavigation();
   const handleHiddenOperation = useCallback(() => {
     const buttons: AlertButton[] = [
@@ -26,8 +29,9 @@ function Main() {
   return (
     <View style={styles.container}>
       {/* <ProductList storeId={store!.id} /> */}
+      <NotificationSlider storeId={store!.id} />
       <AppMainMenu onLongPress={handleHiddenOperation} />
-      <StatusBar style="auto" />
+      {/* <StatusBar style="auto" /> */}
     </View>
   );
 }
@@ -35,9 +39,7 @@ function Main() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#ecf0f100",
-    alignItems: "center",
-    justifyContent: "center",
+    backgroundColor: "#ECF0F100",
   },
 });
 

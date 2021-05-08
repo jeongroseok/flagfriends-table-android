@@ -22,14 +22,16 @@ function Screens() {
   // r();
   // r2();
   if (loading) {
-    <View style={styles.container}>
-      <Text>Loading...</Text>
-    </View>;
+    return (
+      <View style={styles.container}>
+        <Text>Loading...</Text>
+      </View>
+    );
   }
 
   return (
     <NavigationContainer>
-      <Stack.Navigator initialRouteName="Main">
+      <Stack.Navigator initialRouteName={store ? "Main" : "Configuration"}>
         <Stack.Screen name="Main" component={Main} />
         <Stack.Screen name="Configuration" component={Configuration} />
         {/* <Stack.Screen name="NotFound" component={NotFound} /> */}

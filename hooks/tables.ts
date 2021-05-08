@@ -27,6 +27,14 @@ export function useCurrentTableId() {
   const StorageKey = "tableId";
   const { getItem, setItem, removeItem } = useAsyncStorage(StorageKey);
   const [currentTableId, setCurrentTableId] = useState<StorageType>();
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    (async () => {
+      setCurrentTableId((await getItem()) || undefined);
+      setLoading(false);
+    })();
+  }, [getItem, setCurrentTableId]);
 
   const changeCurrentTableId = useCallback(
     async (id: StorageType) => {
@@ -37,15 +45,10 @@ export function useCurrentTableId() {
     [setItem, setCurrentTableId]
   );
 
-  useEffect(() => {
-    (async () => {
-      setCurrentTableId((await getItem()) || undefined);
-    })();
-  }, [getItem]);
-
   return {
     currentTableId,
     changeCurrentTableId,
+    loading,
   };
 }
 
@@ -54,8 +57,8 @@ export function useTable() {
 }
 
 export function useTableProvider() {
-  const { currentTableId, changeCurrentTableId } = useCurrentTableId();
-
+  const { currentTableId, changeCurrentTableId, loading } = useCurrentTableId();
+  console.log("useTableProvider loading: " + loading);
   const state$ = useObservable(
     (inputs$) =>
       inputs$.pipe(
@@ -106,10 +109,10 @@ export function useTableProvider() {
         unoccupy: () => unoccupyTable(table!),
         order,
       },
-      loading: currentTableId && !state,
+      loading: (currentTableId && !state) || loading,
       changeTable: (table: Pick<Table, "id">) => changeCurrentTableId(table.id),
     };
-  }, [state]);
+  }, [state, currentTableId, loading]);
 }
 
 export function useAllTableSummariesByStoreId(storeId: string) {

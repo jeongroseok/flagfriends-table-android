@@ -24,6 +24,7 @@ export function useCurrentStoreId() {
   const StorageKey = "storeId";
   const { getItem, setItem, removeItem } = useAsyncStorage(StorageKey);
   const [currentStoreId, setCurrentStoreId] = useState<StorageType>();
+  const [loading, setLoading] = useState(true);
 
   const changeCurrentStoreId = useCallback(
     async (id: StorageType) => {
@@ -37,17 +38,19 @@ export function useCurrentStoreId() {
   useEffect(() => {
     (async () => {
       setCurrentStoreId((await getItem()) || undefined);
+      setLoading(false);
     })();
   }, [getItem]);
 
   return {
     currentStoreId,
     changeCurrentStoreId,
+    loading,
   };
 }
 
 export function useStoreProvider() {
-  const { currentStoreId, changeCurrentStoreId } = useCurrentStoreId();
+  const { currentStoreId, changeCurrentStoreId, loading } = useCurrentStoreId();
 
   const state$ = useObservable(
     (inputs$) =>
@@ -74,11 +77,11 @@ export function useStoreProvider() {
       store: state?.store && {
         ...state.store,
       },
-      loading: currentStoreId && !state,
+      loading: (currentStoreId && !state) || loading,
       changeStore: (store: Pick<Store, "id">) => changeCurrentStoreId(store.id),
       // authorized: firestore rules에서 던지는 예외 처리할 것
     };
-  }, [state]);
+  }, [state, currentStoreId, loading]);
 }
 
 export function useStore() {
