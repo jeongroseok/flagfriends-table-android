@@ -60,7 +60,7 @@ interface State {
   isOpen: boolean;
 }
 
-class AppCircularMenu extends React.Component<Props, State> {
+class CircularMenu extends React.Component<Props, State> {
   state = { anim: new Animated.Value(0), isOpen: false };
 
   open() {
@@ -150,7 +150,7 @@ class AppCircularMenu extends React.Component<Props, State> {
                   ],
                 }}
               >
-                {child}
+                <View>{child}</View>
               </View>
             ))}
           </AnimatedCircleView>
@@ -212,4 +212,4 @@ class AppCircularMenu extends React.Component<Props, State> {
   }
 }
 
-export default AppCircularMenu;
+export default CircularMenu;

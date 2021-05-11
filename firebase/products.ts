@@ -87,8 +87,8 @@ const productCategoriesRef = firebase
   .withConverter(productCategoryConverter);
 const productStorageRef = firebase.storage().ref("products");
 
-export const listProductsByStoreId = (storeId: string) =>
-  productsRef.where("storeId", "==", storeId);
+export const listProductsByCategoryIds = (categoryIds: string[]) =>
+  productsRef.where("categoryId", "in", categoryIds);
 
 export const getProductById = (id: string) => productsRef.doc(id);
 
@@ -101,3 +101,9 @@ export const listProductCategoriesByIds = (ids: string[]) =>
     "in",
     ids
   );
+
+export const listProductCategoriesByStoreId = (storeId: string) =>
+  productCategoriesRef.where("storeId", "==", storeId);
+
+export const listProductCategoriesByParentId = (parentId: string) =>
+  productCategoriesRef.where("parentId", "==", parentId);

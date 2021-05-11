@@ -10,17 +10,21 @@ import {
   Picker as TablePicker,
   SummaryText as TableSummaryText,
 } from "../../components/tables";
-import { useLanguageCode, useStore, useTable } from "../../hooks";
+import {
+  useLanguageCode,
+  useStore,
+  useStoreProvider,
+  useTable,
+} from "../../hooks";
 
 import { Picker as StorePicker } from "../../components/stores";
 
-function Configuration() {
+function Preferences() {
   const languageCode = useLanguageCode();
   const { store, loading: storeLoading, changeStore } = useStore();
   const { table, loading: tableLoading, changeTable } = useTable();
   const loading = storeLoading || tableLoading;
 
-  console.log(useTable());
   if (loading) {
     return (
       <View style={styles.container}>
@@ -79,4 +83,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default Configuration;
+export default Preferences;

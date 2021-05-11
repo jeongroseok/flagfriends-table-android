@@ -1,4 +1,11 @@
-import { Alert, AlertButton, StyleSheet, View } from "react-native";
+import {
+  Alert,
+  AlertButton,
+  Button,
+  StyleSheet,
+  Text,
+  View,
+} from "react-native";
 import React, { useCallback } from "react";
 
 import { MainMenu as AppMainMenu } from "../components/app";
@@ -16,7 +23,7 @@ function Main() {
       {
         text: "확인",
         style: "default",
-        onPress: () => navigation.navigate("Configuration"),
+        onPress: () => navigation.navigate("preferences"),
       },
     ];
     Alert.alert(
@@ -26,11 +33,31 @@ function Main() {
     );
   }, []);
 
+  if (!store) {
+    return (
+      <View>
+        <Text>설정 필요!</Text>
+        <Button
+          title="설정"
+          onPress={() => navigation.navigate("preferences")}
+        />
+      </View>
+    );
+  }
+
   return (
     <View style={styles.container}>
-      {/* <ProductList storeId={store!.id} /> */}
       <NotificationSlider storeId={store!.id} />
-      <AppMainMenu onLongPress={handleHiddenOperation} />
+      <AppMainMenu
+        onLongPress={handleHiddenOperation}
+        onPress={(item) => {
+          switch (item) {
+            case 2:
+              navigation.navigate("products");
+              break;
+          }
+        }}
+      />
       {/* <StatusBar style="auto" /> */}
     </View>
   );
