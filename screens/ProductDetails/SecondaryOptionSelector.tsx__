@@ -1,0 +1,36 @@
+import { CheckSelector, RadioSelector } from "../../components";
+
+import PropTypes from "prop-types";
+import React from "react";
+
+function getComponentByByType(type) {
+  switch (type) {
+    case "RADIO":
+      return RadioSelector;
+    case "CHECK":
+      return CheckSelector;
+  }
+}
+
+export default function SecondaryOptionSelector({
+  type,
+  values,
+  selectedIndex,
+  onChange,
+}) {
+  const OptionSelector = getComponentByByType(type);
+  return (
+    <OptionSelector
+      values={values}
+      selectedIndex={selectedIndex}
+      onChange={onChange}
+    />
+  );
+}
+
+SecondaryOptionSelector.propTypes = {
+  type: PropTypes.string.isRequired,
+  values: PropTypes.oneOfType([PropTypes.string, PropTypes.object]),
+  selectedIndex: PropTypes.number,
+  onChange: PropTypes.func,
+};

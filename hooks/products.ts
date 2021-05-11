@@ -123,5 +123,5 @@ export function useProductById(id: string) {
     [id]
   );
   const state = useObservableState(state$);
-  return state?.value;
+  return { product: state?.value };
 }

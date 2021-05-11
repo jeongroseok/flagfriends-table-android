@@ -1,0 +1,82 @@
+import { Text, TouchableOpacity, View } from "react-native";
+
+import PropTypes from "prop-types";
+import React from "react";
+import { Styles } from "../Common";
+
+function OptionSelectorItem({ value, onSelect, selected }) {
+  return (
+    <TouchableOpacity
+      style={{
+        flex: 1,
+        marginHorizontal: 14,
+        borderRadius: 30,
+        backgroundColor: selected ? "#131313" : "transparent",
+      }}
+      onPress={onSelect}
+    >
+      <Text
+        style={[
+          Styles.textSmall,
+          Styles.textRegular,
+          {
+            lineHeight: 23,
+            paddingTop: 4,
+            paddingBottom: 5,
+            color: selected ? "#fff" : "#000",
+            textAlign: "center",
+          },
+        ]}
+      >
+        {value}
+      </Text>
+    </TouchableOpacity>
+  );
+}
+
+OptionSelectorItem.propTypes = {
+  value: PropTypes.string,
+  selected: PropTypes.bool,
+  onSelect: PropTypes.func,
+};
+
+OptionSelectorItem.defaultProps = {
+  value: "",
+  selected: false,
+  onSelect: null,
+};
+
+export default function OptionSelector({ values, selectedIndex, onChange }) {
+  return (
+    <View
+      style={{
+        flexDirection: "row",
+        justifyContent: "space-around",
+        paddingVertical: 18,
+      }}
+    >
+      {values.map((value, index) => (
+        <OptionSelectorItem
+          key={index}
+          value={value}
+          onSelect={() => onChange(index)}
+          selected={index == selectedIndex}
+        />
+      ))}
+    </View>
+  );
+}
+
+OptionSelector.propTypes = {
+  values: PropTypes.arrayOf(
+    PropTypes.oneOfType(PropTypes.object, PropTypes.string)
+  ),
+  selectedIndex: PropTypes.number,
+  onChange: PropTypes.func,
+};
+
+OptionSelector.defaultProps = {
+  values: [],
+  selectedIndex: 0,
+  onChange: null,
+};

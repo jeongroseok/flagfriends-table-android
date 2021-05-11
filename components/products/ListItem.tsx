@@ -73,7 +73,7 @@ function ListItem({ productSummary, onPress }: Props) {
     return { uri: productSummary.media.thumbnail };
   }, [productSummary]);
 
-  const enabled = productSummary.status !== "READY";
+  const enabled = productSummary.status === "READY";
 
   return (
     <TouchableOpacity
@@ -128,10 +128,15 @@ function ListItem({ productSummary, onPress }: Props) {
             { lineHeight: 20, marginLeft: 1 },
           ]}
         >
-          {productSummary.price[currencyCode]} 원
+          {productSummary.price[currencyCode]
+            ?.toString()
+            .replace(/\B(?=(\d{3})+(?!\d))/g, ",") || 0}{" "}
+          원
         </Text>
       </View>
-      <ProductListItemBadge type={productSummary.badges[0]} />
+      {productSummary.badges.map((badge) => (
+        <ProductListItemBadge type={badge} />
+      ))}
     </TouchableOpacity>
   );
 }

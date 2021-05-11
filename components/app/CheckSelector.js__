@@ -1,0 +1,84 @@
+import { Image, Text, TouchableOpacity, View } from "react-native";
+
+import PropTypes from "prop-types";
+import React from "react";
+import { Styles } from "../Common";
+import checkOn from "../assets/check_on.png";
+
+function CheckSelectorItem({ value, onSelect, selected }) {
+  // typeof instanceof object로 object이면 옆에 subvalue띄우기
+  return (
+    <TouchableOpacity
+      style={{
+        flexDirection: "row",
+        justifyContent: "flex-start",
+        alignItems: "center",
+        paddingVertical: 10,
+        paddingHorizontal: 20,
+      }}
+      onPress={onSelect}
+    >
+      <Image
+        style={{ width: 32, height: 32, opacity: selected ? 1 : 0.165 }}
+        source={checkOn}
+      />
+      <Text
+        style={[
+          Styles.textSmall,
+          Styles.textRegular,
+          {
+            lineHeight: 23,
+            paddingHorizontal: 10,
+          },
+        ]}
+      >
+        {value}
+      </Text>
+    </TouchableOpacity>
+  );
+}
+
+CheckSelectorItem.propTypes = {
+  value: PropTypes.oneOfType([PropTypes.string, PropTypes.object]),
+  selected: PropTypes.bool,
+  onSelect: PropTypes.func,
+};
+
+CheckSelectorItem.defaultProps = {
+  value: "",
+  selected: false,
+  onSelect: null,
+};
+
+export default function CheckSelector({ values, selectedIndex, onChange }) {
+  return (
+    <View
+      style={{
+        paddingVertical: 14,
+      }}
+    >
+      {values.map((value, index) => (
+        <CheckSelectorItem
+          key={index}
+          value={value}
+          onSelect={() => onChange(index)}
+          selected={index == selectedIndex}
+        />
+      ))}
+    </View>
+  );
+}
+
+CheckSelector.propTypes = {
+  values: PropTypes.arrayOf(
+    PropTypes.oneOfType([PropTypes.string, PropTypes.object])
+  ),
+  selectedIndex: PropTypes.number,
+  onChange: PropTypes.func,
+};
+
+CheckSelector.defaultProps = {
+  values: [],
+  selectedIndex: 0,
+  onChange: null,
+};

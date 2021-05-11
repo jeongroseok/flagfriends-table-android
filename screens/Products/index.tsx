@@ -14,9 +14,17 @@ import { createMaterialTopTabNavigator } from "@react-navigation/material-top-ta
 const Tab = createMaterialTopTabNavigator();
 
 function ProductList() {
+  const navigation = useNavigation();
   const route = useRoute();
   const { storeId, categoryId } = route.params as any;
-  return <ProductCategorizedList storeId={storeId} categoryId={categoryId} />;
+  return (
+    <ProductCategorizedList
+      categoryId={categoryId}
+      onProductPress={(id) =>
+        navigation.navigate("productDetails", { productId: id })
+      }
+    />
+  );
 }
 
 function Products() {
