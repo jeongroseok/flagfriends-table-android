@@ -55,6 +55,9 @@ function Main() {
             case 2:
               navigation.navigate("products");
               break;
+            case 3:
+              navigation.navigate("productOrders");
+              break;
           }
         }}
       />

@@ -29,6 +29,7 @@ enum MainMenuItem {
   직원호출,
   중간계산서요청,
   제품주문,
+  주문목록,
 }
 type Props = {
   onPress?: (item: MainMenuItem) => void;
@@ -80,11 +81,12 @@ function MainMenu({ onPress, onLongPress }: Props) {
           <Text>테이블 메세징</Text>
         </DisabledMenuItem>
       </TouchableOpacity>
-      <TouchableOpacity>
-        <DisabledMenuItem>
+      <TouchableOpacity onPress={() => onPress?.(MainMenuItem.주문목록)}>
+        <MenuItem>
           <IconGame width={50} height={50} fill="black" />
-          <Text>술게임</Text>
-        </DisabledMenuItem>
+          <Text>주문 목록</Text>
+          <Text>(테스트)</Text>
+        </MenuItem>
       </TouchableOpacity>
     </CircularMenu>
   );

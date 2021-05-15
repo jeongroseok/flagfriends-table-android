@@ -15,6 +15,7 @@ import { useNavigation, useRoute } from "@react-navigation/native";
 import DescriptionSection from "./DescriptionSection";
 import PriceSection from "./PriceSection";
 import Section from "./Section";
+import { cartState } from "../../states";
 import { useRecoilState } from "recoil";
 
 // import SecondaryOptionSelector from "./SecondaryOptionSelector";
@@ -24,9 +25,10 @@ const iconNotice = require("../../assets/icon_notice.png");
 const thumbDefault = require("../../assets/thumbDefault.png");
 // import { useProduct } from "../../hooks";
 
-export default function ProductDetailScreen() {
+function ProductDetails() {
   const navigation = useNavigation();
   const route = useRoute();
+  const [cart, setCart] = useRecoilState(cartState);
 
   const languageCode = useLanguageCode();
   const currencyCode = useCurrencyCode();
@@ -83,8 +85,13 @@ export default function ProductDetailScreen() {
     _product.quantity = quantity;
     _product.options = options;
 
-    // setCart([...cart, _product]);
-    navigation.navigate("Cart");
+    setCart({
+      items: [
+        ...cart.items,
+        { productId: product!.id, optionSelections: {}, quantity: 1 },
+      ],
+    });
+    navigation.navigate("cart");
   }, [product, quantity, options]);
 
   if (!product) {
@@ -206,3 +213,4 @@ export default function ProductDetailScreen() {
     </View>
   );
 }
+export default ProductDetails;

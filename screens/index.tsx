@@ -3,6 +3,7 @@ import Main from "./Main";
 import { NavigationContainer } from "@react-navigation/native";
 import Preferences from "./Preferences";
 import ProductDetails from "./ProductDetails";
+import ProductOrders from "./ProductOrders";
 import Products from "./Products";
 import React from "react";
 import { createStackNavigator } from "@react-navigation/stack";
@@ -43,6 +44,7 @@ function Screens() {
           options={{ title: "상품목록" }}
         />
         <Stack.Screen name="productDetails" component={ProductDetails} />
+        <Stack.Screen name="productOrders" component={ProductOrders} />
         <Stack.Screen name="preferences" component={Preferences} />
         {/* <Stack.Screen name="NotFound" component={NotFound} /> */}
       </Stack.Navigator>
