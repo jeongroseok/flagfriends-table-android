@@ -37,8 +37,8 @@ function ProductList() {
 function Products() {
   const navigation = useNavigation();
   const languageCode = useLanguageCode();
-  const { store } = useStore();
-  const categories = useRootProductCategoriesByStoreId(store!.id);
+  const store = useStore();
+  const categories = useRootProductCategoriesByStoreId(store.id);
 
   return (
     <>
@@ -63,7 +63,7 @@ function Products() {
           <Tab.Screen
             key={id}
             name={name[languageCode]}
-            initialParams={{ storeId: store!.id, categoryId: id }}
+            initialParams={{ storeId: store.id, categoryId: id }}
             component={ProductList}
           />
         ))}

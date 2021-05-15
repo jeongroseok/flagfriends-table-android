@@ -14,6 +14,7 @@ import {
   useLanguageCode,
   useStore,
   useStoreProvider,
+  useStoreSelector,
   useTable,
 } from "../../hooks";
 
@@ -21,7 +22,12 @@ import { Picker as StorePicker } from "../../components/stores";
 
 function Preferences() {
   const languageCode = useLanguageCode();
-  const { store, loading: storeLoading, changeStore } = useStore();
+  const {
+    store,
+    loading: storeLoading,
+    error,
+    changeStore,
+  } = useStoreSelector();
   const { table, loading: tableLoading, changeTable } = useTable();
   const loading = storeLoading || tableLoading;
 
@@ -39,10 +45,7 @@ function Preferences() {
   return (
     <View>
       <Text>Select Store (selectedStoreId: {storeId})</Text>
-      <StorePicker
-        selectedValue={storeId}
-        onValueChange={(id) => changeStore?.({ id })}
-      />
+      <StorePicker selectedValue={storeId} onValueChange={changeStore} />
       {storeId && (
         <>
           <Text>Select Table (selectedTableId: {tableId})</Text>

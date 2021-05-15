@@ -15,7 +15,7 @@ import { useNavigation } from "@react-navigation/native";
 import { useStore } from "../hooks";
 
 function Main() {
-  const { store } = useStore();
+  const store = useStore();
   const navigation = useNavigation();
   const handleHiddenOperation = useCallback(() => {
     const buttons: AlertButton[] = [
@@ -47,7 +47,7 @@ function Main() {
 
   return (
     <View style={styles.container}>
-      <NotificationSlider storeId={store!.id} />
+      <NotificationSlider storeId={store.id} />
       <AppMainMenu
         onLongPress={handleHiddenOperation}
         onPress={(item) => {

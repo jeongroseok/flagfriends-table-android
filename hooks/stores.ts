@@ -3,6 +3,10 @@ import { collectionData, docData } from "rxfire/firestore";
 import { map, switchMap } from "rxjs/operators";
 import { useCallback, useContext, useEffect, useMemo, useState } from "react";
 import { useObservable, useObservableState } from "observable-hooks";
+import {
+  useObservableStateFromFBColRef,
+  useObservableStateFromFBDocRef,
+} from "./utilities";
 
 import { StoreContext } from "../providers/StoreProvider";
 import { of } from "rxjs";
@@ -10,13 +14,12 @@ import { useAsyncStorage } from "@react-native-async-storage/async-storage";
 
 export type { Store } from "../firebase/stores";
 
-export function useAllStoreSummaries() {
-  const state$ = useObservable(
-    (inputs$) =>
-      inputs$.pipe(switchMap(() => collectionData<Store>(listStores(), "id"))),
+export function useStoreSummaries() {
+  const [storeSummaries, loading, error] = useObservableStateFromFBColRef(
+    () => listStores(),
     []
   );
-  return useObservableState(state$) || [];
+  return { storeSummaries, loading, error };
 }
 
 export function useCurrentStoreId() {
@@ -50,40 +53,36 @@ export function useCurrentStoreId() {
 }
 
 export function useStoreProvider() {
-  const { currentStoreId, changeCurrentStoreId, loading } = useCurrentStoreId();
-
-  const state$ = useObservable(
-    (inputs$) =>
-      inputs$.pipe(
-        map(([id]) => {
-          if (id) return getStoreById(id);
-          return undefined;
-        }),
-        switchMap((storeRef) => {
-          if (storeRef)
-            return docData<Store>(storeRef, "id").pipe(
-              map((store) => ({ storeRef, store }))
-            );
-          return of(undefined);
-        })
-      ),
+  const { currentStoreId, changeCurrentStoreId } = useCurrentStoreId();
+  const [store, loading, error] = useObservableStateFromFBDocRef(
+    () => getStoreById(currentStoreId!),
     [currentStoreId]
   );
 
-  const state = useObservableState(state$);
-
   return useMemo(() => {
     return {
-      store: state?.store && {
-        ...state.store,
+      store: store && {
+        ...store,
       },
-      loading: (currentStoreId && !state) || loading,
-      changeStore: (store: Pick<Store, "id">) => changeCurrentStoreId(store.id),
+      error,
+      loading,
+      changeStore: (id: string | undefined) => changeCurrentStoreId(id),
       // authorized: firestore rules에서 던지는 예외 처리할 것
     };
-  }, [state, currentStoreId, loading]);
+  }, [store, loading, error]);
 }
 
 export function useStore() {
-  return useContext(StoreContext)!;
+  const { store } = useContext(StoreContext);
+  return store!;
+}
+
+export function useStoreSelector() {
+  const { store, error, loading, changeStore } = useContext(StoreContext);
+  return {
+    store,
+    error,
+    loading,
+    changeStore,
+  };
 }

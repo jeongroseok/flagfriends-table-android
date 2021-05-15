@@ -1,4 +1,4 @@
-import { useAllStoreSummaries, useLanguageCode } from "../../hooks";
+import { useLanguageCode, useStoreSummaries } from "../../hooks";
 
 import { Picker as RNPicker } from "@react-native-picker/picker";
 import React from "react";
@@ -9,14 +9,14 @@ type Props = {
 };
 function Picker({ selectedValue, onValueChange }: Props) {
   const languageCode = useLanguageCode();
-  const summaries = useAllStoreSummaries();
+  const { storeSummaries } = useStoreSummaries();
 
   return (
     <RNPicker
       selectedValue={selectedValue}
       onValueChange={(itemValue, itemIndex) => onValueChange?.(itemValue)}
     >
-      {summaries.map(({ id, name }) => (
+      {storeSummaries.map(({ id, name }) => (
         <RNPicker.Item key={id} label={name[languageCode]} value={id} />
       ))}
     </RNPicker>
