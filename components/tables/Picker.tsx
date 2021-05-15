@@ -8,13 +8,14 @@ type Props = {
   onValueChange?: (id: string) => void;
 };
 function Picker({ storeId, selectedValue, onValueChange }: Props) {
-  const summaries = useAllTableSummariesByStoreId(storeId);
+  const { tableSummaries } = useAllTableSummariesByStoreId(storeId);
   return (
     <RNPicker
       selectedValue={selectedValue}
       onValueChange={(itemValue, itemIndex) => onValueChange?.(itemValue)}
     >
-      {summaries.map(({ id, name }) => (
+      <RNPicker.Item label="미선택" value={undefined} />
+      {tableSummaries.map(({ id, name }) => (
         <RNPicker.Item key={id} label={name} value={id} />
       ))}
     </RNPicker>

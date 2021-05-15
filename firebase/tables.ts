@@ -53,13 +53,29 @@ export interface Table {
   occupation?: Occupation;
 }
 
+const tableConverter = {
+  toFirestore({ id, ...rest }: Table): firebase.firestore.DocumentData {
+    return rest;
+  },
+  fromFirestore(
+    snapshot: firebase.firestore.QueryDocumentSnapshot,
+    options: firebase.firestore.SnapshotOptions
+  ) {
+    const data = snapshot.data(options)!;
+    return { id: snapshot.id, ...data } as Table;
+  },
+};
+
 export interface OccupationHistory {
   readonly id: string; // tableId-occupationId 합성키
   readonly createdAt: firebase.firestore.Timestamp;
   readonly orders: { [orderId: string]: Exclude<Order, "status"> };
 }
 
-const tablesRef = firebase.firestore().collection("tables");
+const tablesRef = firebase
+  .firestore()
+  .collection("tables")
+  .withConverter(tableConverter);
 const occupationHistoryRef = firebase
   .firestore()
   .collection("occupationHistories");
@@ -111,9 +127,9 @@ export const unoccupyTable = async ({ id }: Pick<Table, "id">) => {
     if (!occupation) throw new Error("invalid operation, empty occupation");
     transaction.set(occupationHistoryRef.doc(), {
       ...occupation,
-      orders: Object.entries(
-        occupation.orders
-      ).map(([id, { status, ...rest }]) => ({ ...rest })),
+      orders: Object.entries(occupation.orders).map(
+        ([id, { status, ...rest }]) => ({ ...rest })
+      ),
     });
 
     transaction.update(ref, {

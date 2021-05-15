@@ -10,10 +10,9 @@ type Props = {
   children: ReactNode;
 };
 function TableProvider({ children }: Props) {
+  const value = useTableProvider();
   return (
-    <TableContext.Provider value={useTableProvider()}>
-      {children}
-    </TableContext.Provider>
+    <TableContext.Provider value={value}>{children}</TableContext.Provider>
   );
 }
 

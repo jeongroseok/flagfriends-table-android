@@ -10,10 +10,10 @@ type Props = {
   children: ReactNode;
 };
 function StoreProvider({ children }: Props) {
+  const value = useStoreProvider();
+  console.log(`StoreProvider: ${JSON.stringify(value)}`);
   return (
-    <StoreContext.Provider value={useStoreProvider()}>
-      {children}
-    </StoreContext.Provider>
+    <StoreContext.Provider value={value}>{children}</StoreContext.Provider>
   );
 }
 

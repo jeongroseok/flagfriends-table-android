@@ -16,6 +16,7 @@ function Picker({ selectedValue, onValueChange }: Props) {
       selectedValue={selectedValue}
       onValueChange={(itemValue, itemIndex) => onValueChange?.(itemValue)}
     >
+      <RNPicker.Item label={"미선택"} value={undefined} />
       {storeSummaries.map(({ id, name }) => (
         <RNPicker.Item key={id} label={name[languageCode]} value={id} />
       ))}

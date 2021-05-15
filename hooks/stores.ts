@@ -66,7 +66,7 @@ export function useStoreProvider() {
       },
       error,
       loading,
-      changeStore: (id: string | undefined) => changeCurrentStoreId(id),
+      changeStore: changeCurrentStoreId,
       // authorized: firestore rules에서 던지는 예외 처리할 것
     };
   }, [store, loading, error]);

@@ -15,6 +15,10 @@ import { collectionData, docData } from "rxfire/firestore";
 import { map, switchMap } from "rxjs/operators";
 import { useCallback, useContext, useEffect, useMemo, useState } from "react";
 import { useObservable, useObservableState } from "observable-hooks";
+import {
+  useObservableStateFromFBColRef,
+  useObservableStateFromFBDocRef,
+} from "./utilities";
 
 import { TableContext } from "../providers/TableProvider";
 import { of } from "rxjs";
@@ -52,36 +56,18 @@ export function useCurrentTableId() {
   };
 }
 
-export function useTable() {
-  return useContext(TableContext)!;
-}
-
 export function useTableProvider() {
-  const { currentTableId, changeCurrentTableId, loading } = useCurrentTableId();
-  console.log("useTableProvider loading: " + loading);
-  const state$ = useObservable(
-    (inputs$) =>
-      inputs$.pipe(
-        map(([id]) => {
-          if (id) return getTableById(id);
-          return undefined;
-        }),
-        switchMap((tableRef) => {
-          if (tableRef)
-            return docData<Table>(tableRef, "id").pipe(
-              map((table) => ({ tableRef, table }))
-            );
-          return of(undefined);
-        })
-      ),
+  const {
+    currentTableId,
+    changeCurrentTableId,
+    loading: idLoading,
+  } = useCurrentTableId();
+  const [table, loading, error] = useObservableStateFromFBDocRef(
+    () => getTableById(currentTableId!),
     [currentTableId]
   );
 
-  const state = useObservableState(state$);
-
   return useMemo(() => {
-    const table = state?.table;
-
     const order = async (
       productId: Product["id"],
       optionSelections: {
@@ -101,29 +87,34 @@ export function useTableProvider() {
     };
 
     return {
-      table: state?.table && {
-        ...state.table,
+      table: table && {
+        ...table,
         ready: () => readyTable(table!),
         prepare: () => prepareTable(table!),
         occupy: () => occupyTable(table!),
         unoccupy: () => unoccupyTable(table!),
         order,
       },
-      loading: (currentTableId && !state) || loading,
-      changeTable: (table: Pick<Table, "id">) => changeCurrentTableId(table.id),
+      loading: idLoading && loading,
+      error,
+      changeTable: changeCurrentTableId,
     };
-  }, [state, currentTableId, loading]);
+  }, [table, currentTableId, loading, error]);
+}
+
+export function useTable() {
+  const { table } = useContext(TableContext);
+  return table!;
+}
+
+export function useTableSelector() {
+  return useContext(TableContext);
 }
 
 export function useAllTableSummariesByStoreId(storeId: string) {
-  const state$ = useObservable(
-    (inputs$) =>
-      inputs$.pipe(
-        switchMap(([storeId]) =>
-          collectionData<Table>(listTablesByStoreId(storeId), "id")
-        )
-      ),
+  const [tableSummaries, loading, error] = useObservableStateFromFBColRef(
+    () => listTablesByStoreId(storeId),
     [storeId]
   );
-  return useObservableState(state$) || [];
+  return { tableSummaries, loading, error };
 }

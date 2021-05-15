@@ -1,4 +1,8 @@
+import { Text, View } from "react-native";
+import { useStoreSelector, useTableSelector } from "../hooks";
+
 import Constants from "expo-constants";
+import Landing from "./Landing";
 import Main from "./Main";
 import { NavigationContainer } from "@react-navigation/native";
 import Preferences from "./Preferences";
@@ -11,6 +15,32 @@ import { createStackNavigator } from "@react-navigation/stack";
 const Stack = createStackNavigator();
 
 function Screens() {
+  const {
+    store,
+    loading: storeLoading,
+    error: storeError,
+  } = useStoreSelector();
+  const {
+    table,
+    loading: tableLoading,
+    error: tableError,
+  } = useTableSelector();
+  const loading = storeLoading || tableLoading;
+  const ok = store && table; // 변수명 바꿀 것
+
+  if (loading) {
+    return <Text>loading</Text>;
+  }
+
+  if (tableError || storeError) {
+    return (
+      <View>
+        <Text>store error:{JSON.stringify(storeError)}</Text>
+        <Text>table error:{JSON.stringify(tableError)}</Text>
+      </View>
+    );
+  }
+
   return (
     <NavigationContainer>
       <Stack.Navigator
@@ -33,19 +63,25 @@ function Screens() {
           headerBackAllowFontScaling: false,
         }}
       >
-        <Stack.Screen
-          name="main"
-          component={Main}
-          options={{ headerShown: false }}
-        />
-        <Stack.Screen
-          name="products"
-          component={Products}
-          options={{ title: "상품목록" }}
-        />
-        <Stack.Screen name="productDetails" component={ProductDetails} />
-        <Stack.Screen name="productOrders" component={ProductOrders} />
-        <Stack.Screen name="preferences" component={Preferences} />
+        {ok ? (
+          <>
+            <Stack.Screen
+              name="main"
+              component={Main}
+              options={{ headerShown: false }}
+            />
+            <Stack.Screen
+              name="products"
+              component={Products}
+              options={{ title: "상품목록" }}
+            />
+            <Stack.Screen name="productDetails" component={ProductDetails} />
+            <Stack.Screen name="productOrders" component={ProductOrders} />
+            <Stack.Screen name="preferences" component={Preferences} />
+          </>
+        ) : (
+          <Stack.Screen name="landing" component={Landing} />
+        )}
         {/* <Stack.Screen name="NotFound" component={NotFound} /> */}
       </Stack.Navigator>
     </NavigationContainer>
