@@ -38,8 +38,8 @@ function List({ table }: Props) {
         borderTopColor: Colors.lightGray,
       }}
       data={orders}
-      keyExtractor={(item, index) => index.toString()}
-      renderItem={({ item, index }) => <ListItem key={index} item={item} />}
+      keyExtractor={(item, index) => item.productId}
+      renderItem={({ item, index }) => <ListItem item={item} />}
       ListFooterComponent={() => <ListFooter totalPrice={totalPrice} />}
     />
   );

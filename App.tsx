@@ -3,6 +3,7 @@ import "react-native-get-random-values";
 
 import { LocaleProvider, StoreProvider, TableProvider } from "./providers";
 
+import { BottomSheet } from "./components/carts";
 import { LogBox } from "react-native";
 import React from "react";
 import { RecoilRoot } from "recoil";
@@ -23,16 +24,16 @@ export default function App() {
 
   return (
     <SafeAreaProvider>
-      {/* <RecoilRoot>
+      <RecoilRoot>
         <LocaleProvider>
           <StoreProvider>
             <TableProvider>
               <Screens />
             </TableProvider>
           </StoreProvider>
+          {/* <BottomSheet /> */}
         </LocaleProvider>
-      </RecoilRoot> */}
-      <Test />
+      </RecoilRoot>
     </SafeAreaProvider>
   );
 }

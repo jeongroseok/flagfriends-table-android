@@ -111,7 +111,11 @@ export default function ({ categoryId, onProductPress }: Props) {
       style={{ backgroundColor: "white" }}
       sections={sections}
       renderItem={({ item, section }) => (
-        <ListItem productSummary={item} onPress={onProductPress} />
+        <ListItem
+          key={item.id}
+          productSummary={item}
+          onPress={onProductPress}
+        />
       )}
       renderSectionHeader={SectionHeader}
     />

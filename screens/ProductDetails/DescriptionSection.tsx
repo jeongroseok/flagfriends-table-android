@@ -12,7 +12,12 @@ function DescriptionSection({ description }: Props) {
       style={[
         Styles.textSmall,
         Styles.textRegular,
-        { marginTop: 24, marginBottom: 6, textAlign: "center" },
+        {
+          marginTop: 24,
+          marginBottom: 6,
+          textAlign: "center",
+          marginHorizontal: 22,
+        },
       ]}
     >
       {description}

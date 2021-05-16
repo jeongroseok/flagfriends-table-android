@@ -43,7 +43,7 @@ function PriceSection({ price }: Props) {
           },
         ]}
       >
-        {currencyCode}
+        {currencyCode.toUpperCase()}
       </Text>
     </View>
   );

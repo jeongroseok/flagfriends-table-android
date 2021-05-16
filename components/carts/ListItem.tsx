@@ -1,143 +1,100 @@
-import { Colors, Styles } from "../../styles";
-import { Image, Text, TouchableOpacity, View } from "react-native";
-import { Product, useLanguageCode, useProductById } from "../../hooks";
-import React, { useEffect, useState } from "react";
-import { CartItem } from "../../states";
+import { Image, Text, View } from "react-native";
+import { useCurrencyCode, useLanguageCode, useProductById } from "../../hooks";
 
-const close = require("../../assets/close.png");
-const iconMinus = require("../../assets/icon_minus02.png");
-const iconPlus = require("../../assets/icon_plus02.png");
+import { CartItem } from "../../hooks/carts";
+import React from "react";
+import { Styles } from "../../styles";
+import { TouchableOpacity } from "react-native-gesture-handler";
+
+const close = require("../../assets/close_white.png");
+const plus = require("../../assets/icon_plus02.png");
+const minus = require("../../assets/icon_minus02.png");
+const thumbDefault = require("../../assets/thumbDefault.png");
 
 type Props = {
   item: CartItem;
+  onChangeQuantity: (quantity: number) => void;
   onDelete: () => void;
-  onQuantityChange: (value: number) => void;
 };
-export default function ListItem({ item, onDelete, onQuantityChange }: Props) {
+function ListItem({ item, onChangeQuantity, onDelete }: Props) {
   const languageCode = useLanguageCode();
-  const { product } = useProductById(item.productId);
-  const [optionsDescription, setOptionsDescription] = useState();
-
-  useEffect(() => {
-    // const strings = item?.options?.map((option) => {
-    //   const selectedValue = option.values[option.selectedIndex];
-    //   if (typeof selectedValue === "string") {
-    //     return selectedValue;
-    //   } else {
-    //     return selectedValue.text;
-    //   }
-    // });
-    // const desc = strings.reduce((accumulator, currentValue, currentIndex) => {
-    //   if (!currentIndex) {
-    //     return currentValue;
-    //   }
-    //   return accumulator + ", " + currentValue;
-    // });
-    // setOptionsDescription(desc);
-  }, [item]);
-
+  const currencyCode = useCurrencyCode();
+  const { product, loading } = useProductById(item.productId);
   return (
     <View
       style={{
-        flex: 1,
-        alignItems: "center",
         flexDirection: "row",
-        minHeight: 84,
-        paddingVertical: 8,
-        backgroundColor: Colors.white,
+        alignItems: "center",
+        backgroundColor: "#1f1f1f",
+        borderRadius: 32,
+        marginHorizontal: 4,
+        marginVertical: 6,
+        padding: 4,
       }}
     >
       <TouchableOpacity
         style={{
-          width: 36,
-          marginLeft: 4,
+          marginLeft: 8,
           justifyContent: "center",
+          alignItems: "center",
         }}
         onPress={onDelete}
       >
-        <Image style={{ width: 48, height: 48 }} source={close} />
+        <Image style={{ width: 36, height: 36 }} source={close} />
       </TouchableOpacity>
-      <View style={{ flex: 1, paddingLeft: 12 }}>
-        <Text
-          style={[Styles.textSmall, Styles.textRegular, { lineHeight: 22 }]}
-        >
-          {product?.name[languageCode]}
-        </Text>
-        <Text
-          style={[
-            Styles.textExtraSmall,
-            Styles.textRegular,
-            { lineHeight: 14 },
-          ]}
-        >
-          ({optionsDescription})
-        </Text>
+      <View style={{ flex: 1, flexDirection: "row" }}>
+        {/* <Image
+          source={thumbDefault}
+          style={{
+            width: 64,
+            height: 64,
+            borderRadius: 48,
+            backgroundColor: "red",
+            overflow: "hidden",
+          }}
+        /> */}
+        <View style={{ justifyContent: "center" }}>
+          <Text style={[Styles.textSmall, { color: "white" }]}>
+            {product && product.name[languageCode]}
+          </Text>
+          <Text style={[Styles.textExtraSmall, { color: "#aaa" }]}>
+            {product &&
+              ((product.price[currencyCode] || 0) * item.quantity)
+                .toString()
+                .replace(/\B(?=(\d{3})+(?!\d))/g, ",")}{" "}
+            {currencyCode.toUpperCase()}
+          </Text>
+        </View>
       </View>
       <View
         style={{
+          margin: 8,
           flexDirection: "row",
           alignItems: "center",
-          marginHorizontal: 0,
-          marginRight: 22,
+          padding: 6,
+          borderRadius: 32,
+          backgroundColor: "black",
         }}
       >
-        <View
-          style={{
-            paddingVertical: 6,
-            paddingHorizontal: 8,
-            flexDirection: "row",
-            borderRadius: 30,
-            borderWidth: 1,
-            borderColor: Colors.lightGray,
-          }}
+        <TouchableOpacity onPress={() => onChangeQuantity(item.quantity - 1)}>
+          <Image
+            source={minus}
+            style={{ width: 28, height: 28, marginHorizontal: 4 }}
+          />
+        </TouchableOpacity>
+        <Text
+          style={[Styles.textNormal, { marginHorizontal: 8, color: "white" }]}
         >
-          <TouchableOpacity
-            style={{
-              width: 24,
-              justifyContent: "center",
-            }}
-            onPress={() => onQuantityChange(Math.max(item.quantity - 1, 1))}
-          >
-            <Image style={{ width: 24, height: 24 }} source={iconMinus} />
-          </TouchableOpacity>
-          <View
-            style={{
-              width: 48,
-              justifyContent: "center",
-            }}
-          >
-            <Text
-              style={[
-                Styles.textSmall,
-                Styles.textRegular,
-                {
-                  lineHeight: 25,
-                  textAlign: "center",
-                },
-              ]}
-            >
-              {item.quantity}
-            </Text>
-          </View>
-          <TouchableOpacity
-            style={{
-              width: 24,
-              justifyContent: "center",
-            }}
-            onPress={() => onQuantityChange(item.quantity + 1)}
-          >
-            <Image style={{ width: 24, height: 24 }} source={iconPlus} />
-          </TouchableOpacity>
-        </View>
+          {item.quantity}개
+        </Text>
+        <TouchableOpacity onPress={() => onChangeQuantity(item.quantity + 1)}>
+          <Image
+            source={plus}
+            style={{ width: 28, height: 28, marginHorizontal: 4 }}
+          />
+        </TouchableOpacity>
       </View>
-      {/* <TouchableOpacity
-          style={{
-            justifyContent: "center",
-            alignItems: "center",
-          }}
-        >
-          <Text>X</Text>
-        </TouchableOpacity> */}
     </View>
   );
 }
+export default ListItem;

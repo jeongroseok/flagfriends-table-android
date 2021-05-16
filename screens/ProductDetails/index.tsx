@@ -15,7 +15,7 @@ import { useNavigation, useRoute } from "@react-navigation/native";
 import DescriptionSection from "./DescriptionSection";
 import PriceSection from "./PriceSection";
 import Section from "./Section";
-import { cartState } from "../../states";
+import { useCart } from "../../hooks/carts";
 import { useRecoilState } from "recoil";
 
 // import SecondaryOptionSelector from "./SecondaryOptionSelector";
@@ -28,7 +28,7 @@ const thumbDefault = require("../../assets/thumbDefault.png");
 function ProductDetails() {
   const navigation = useNavigation();
   const route = useRoute();
-  const [cart, setCart] = useRecoilState(cartState);
+  const { addItem } = useCart();
 
   const languageCode = useLanguageCode();
   const currencyCode = useCurrencyCode();
@@ -81,17 +81,8 @@ function ProductDetails() {
   // }, [options]);
 
   const handleAddToCart = useCallback(() => {
-    const _product = JSON.parse(JSON.stringify(product));
-    _product.quantity = quantity;
-    _product.options = options;
-
-    setCart({
-      items: [
-        ...cart.items,
-        { productId: product!.id, optionSelections: {}, quantity: 1 },
-      ],
-    });
-    navigation.navigate("cart");
+    addItem({ productId: product!.id, optionSelections: {}, quantity });
+    navigation.goBack();
   }, [product, quantity, options]);
 
   if (!product) {
@@ -204,7 +195,7 @@ function ProductDetails() {
               }}
             >
               <Text style={[Styles.textNormal, { color: "white" }]}>
-                장바구니 ({0})
+                장바구니
               </Text>
             </TouchableOpacity>
           </Overlapping>

@@ -1,10 +1,6 @@
 import { Colors, Styles } from "../../styles";
-import {
-  Directions,
-  FlingGestureHandler,
-  State,
-} from "react-native-gesture-handler";
-import { Text, TouchableOpacity, View } from "react-native";
+import { Dimensions, Text, View } from "react-native";
+import React, { useState } from "react";
 import {
   useLanguageCode,
   useRootProductCategoriesByStoreId,
@@ -12,10 +8,8 @@ import {
 } from "../../hooks";
 import { useNavigation, useRoute } from "@react-navigation/native";
 
-import Cart from "./Cart";
-import { Overlapping } from "../../components/app";
+import { BottomSheet as CartBottomSheet } from "../../components/carts";
 import { CategorizedList as ProductCategorizedList } from "../../components/products";
-import React from "react";
 import { createMaterialTopTabNavigator } from "@react-navigation/material-top-tabs";
 
 const Tab = createMaterialTopTabNavigator();
@@ -33,7 +27,17 @@ function ProductList() {
     />
   );
 }
-
+const renderContent = () => (
+  <View
+    style={{
+      backgroundColor: "white",
+      padding: 16,
+      height: 450,
+    }}
+  >
+    <Text>Swipe down to close</Text>
+  </View>
+);
 function Products() {
   const navigation = useNavigation();
   const languageCode = useLanguageCode();
@@ -48,6 +52,7 @@ function Products() {
 
   return (
     <>
+      <CartBottomSheet />
       <Tab.Navigator
         style={{ flex: 1 }}
         tabBarOptions={{
@@ -74,35 +79,6 @@ function Products() {
           />
         ))}
       </Tab.Navigator>
-
-      <Overlapping style={{ flexDirection: "row", alignItems: "flex-end" }}>
-        <FlingGestureHandler
-          direction={Directions.UP}
-          onHandlerStateChange={({ nativeEvent: { oldState } }) =>
-            oldState == State.ACTIVE && alert("up")
-          }
-        >
-          <View>
-            <View style={{ backgroundColor: "red", width: 100, height: 30 }} />
-            <TouchableOpacity
-              onPress={() => navigation.navigate("cart")}
-              style={{
-                width: 192,
-                height: 64,
-                margin: 10,
-                borderRadius: 32,
-                backgroundColor: "#1E2326",
-                justifyContent: "center",
-                alignItems: "center",
-              }}
-            >
-              <Text style={[Styles.textNormal, { color: "white" }]}>
-                주문하기
-              </Text>
-            </TouchableOpacity>
-          </View>
-        </FlingGestureHandler>
-      </Overlapping>
     </>
   );
 }

@@ -27,7 +27,7 @@ export default function ListItem({ item }: Props) {
   const [optionsDescription, setOptionsDescription] = useState();
 
   useEffect(() => {
-    // const strings = item?.options?.map((option) => {
+    // const strings = item.optionSelections.map((option) => {
     //   const selectedValue = option.values[option.selectedIndex];
     //   if (typeof selectedValue === "string") {
     //     return selectedValue;
@@ -102,9 +102,10 @@ export default function ListItem({ item }: Props) {
           )}
         </Text>
         <Text style={{ color: Colors.red }}>
-          {product?.price[currencyCode]
+          {(product?.price[currencyCode] || 0)
             ?.toString()
-            .replace(/\B(?=(\d{3})+(?!\d))/g, ",")}
+            .replace(/\B(?=(\d{3})+(?!\d))/g, ",")}{" "}
+          {currencyCode.toUpperCase()}
         </Text>
       </View>
     </View>
