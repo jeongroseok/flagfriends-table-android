@@ -1,5 +1,3 @@
-import { Product, Store } from "../hooks";
-
 import { atom } from "recoil";
 
 // export const currentStoreIdState = atom<Store["id"] | undefined>({
@@ -14,10 +12,8 @@ export interface CartItem {
   };
   quantity: number;
 }
-export interface Cart {
-  items: CartItem[];
-}
-export const cartState = atom<Cart>({
-  key: "cartState",
-  default: { items: [] },
+
+export const cartItemsState = atom<CartItem[]>({
+  key: "cartItemsState",
+  default: [],
 });

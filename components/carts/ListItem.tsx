@@ -2,19 +2,14 @@ import { Colors, Styles } from "../../styles";
 import { Image, Text, TouchableOpacity, View } from "react-native";
 import { Product, useLanguageCode, useProductById } from "../../hooks";
 import React, { useEffect, useState } from "react";
+import { CartItem } from "../../states";
 
 const close = require("../../assets/close.png");
 const iconMinus = require("../../assets/icon_minus02.png");
 const iconPlus = require("../../assets/icon_plus02.png");
 
 type Props = {
-  item: {
-    readonly productId: string;
-    readonly optionSelections: {
-      readonly [optionId: string]: { readonly [selectionId: string]: boolean };
-    };
-    quantity: number;
-  };
+  item: CartItem;
   onDelete: () => void;
   onQuantityChange: (value: number) => void;
 };

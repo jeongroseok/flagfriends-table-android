@@ -4,15 +4,15 @@ import { Colors } from "../../styles";
 import { FlatList } from "react-native";
 import ListFooter from "./ListFooter";
 import ListItem from "./ListItem";
-import { cartState } from "../../states";
 import { useRecoilState } from "recoil";
+import { useCart } from "../../hooks/carts";
 
 // function useProductsFromCart() {
 //   const [cart, setCart] = useRecoilState(cartState);
 // }
 
 function List() {
-  const [cart, setCart] = useRecoilState(cartState);
+  const { items } = useCart();
   const [totalPrice, setTotalPrice] = useState(0);
 
   //   useEffect(() => {
@@ -26,7 +26,7 @@ function List() {
     (productIndex) => {
       //   setCart(cart.filter((product, index) => index !== productIndex));
     },
-    [cart]
+    [items]
   );
 
   const handleItemQuantityChange = useCallback(
@@ -40,7 +40,7 @@ function List() {
       //     })
       //   );
     },
-    [cart]
+    [items]
   );
 
   return (
@@ -54,7 +54,7 @@ function List() {
         borderTopColor: Colors.lightGray,
         // elevation: 8,
       }}
-      data={cart.items}
+      data={items}
       keyExtractor={(item, index) => index.toString()}
       renderItem={({ item, index }) => (
         <ListItem
