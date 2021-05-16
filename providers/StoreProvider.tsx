@@ -1,17 +1,13 @@
-import React, { ReactNode, createContext } from "react";
+import React, { createContext } from "react";
 
-import { useStoreProvider } from "../hooks";
+import { useStoreProvider } from "../hooks/storeProviders";
 
 export const StoreContext = createContext<ReturnType<typeof useStoreProvider>>(
   {} as any
 );
 
-type Props = {
-  children: ReactNode;
-};
-function StoreProvider({ children }: Props) {
+function StoreProvider({ children }: React.Component["props"]) {
   const value = useStoreProvider();
-  console.log(`StoreProvider: ${JSON.stringify(value)}`);
   return (
     <StoreContext.Provider value={value}>{children}</StoreContext.Provider>
   );

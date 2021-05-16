@@ -52,11 +52,11 @@ function Main() {
         onLongPress={handleHiddenOperation}
         onPress={(item) => {
           switch (item) {
+            case 1:
+              navigation.navigate("productOrders");
+              break;
             case 2:
               navigation.navigate("products");
-              break;
-            case 3:
-              navigation.navigate("productOrders");
               break;
           }
         }}

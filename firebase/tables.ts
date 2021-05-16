@@ -5,10 +5,9 @@ import { nanoid } from "nanoid";
 import produce from "immer";
 
 export interface Order {
-  readonly product: Readonly<Pick<Product, "id" | "price">> & {
-    optionSelections: {
-      [optionId: string]: { [selectionId: string]: boolean };
-    };
+  readonly productId: Product["id"];
+  readonly optionSelections: {
+    [optionId: string]: { [selectionId: string]: boolean };
   };
   readonly createdAt: firebase.firestore.Timestamp;
   status: "PENDING" | "PROCESSING" | "COMPLETED" | "CANCELLED";

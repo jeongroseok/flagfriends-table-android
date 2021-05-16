@@ -1,9 +1,7 @@
-import { Product, getProductById } from "../firebase/products";
 import {
   Table,
   Occupation as TableOccupation,
   Order as TableOrder,
-  getTableById,
   listTablesByStoreId,
   occupyTable,
   orderByTableId,
@@ -11,100 +9,49 @@ import {
   readyTable,
   unoccupyTable,
 } from "../firebase/tables";
-import { collectionData, docData } from "rxfire/firestore";
 import { map, switchMap } from "rxjs/operators";
-import { useCallback, useContext, useEffect, useMemo, useState } from "react";
+import { useContext, useMemo } from "react";
 import { useObservable, useObservableState } from "observable-hooks";
-import {
-  useObservableStateFromFBColRef,
-  useObservableStateFromFBDocRef,
-} from "./utilities";
 
+import { Product } from "./products";
 import { TableContext } from "../providers/TableProvider";
-import { of } from "rxjs";
-import { useAsyncStorage } from "@react-native-async-storage/async-storage";
+import { getProductById } from "../firebase/products";
+import { snapToData } from "rxfire/firestore";
+import { useObservableStateFromFBColRef } from "./utilities";
 
 export type { Table, TableOccupation, TableOrder };
 
-export function useCurrentTableId() {
-  type StorageType = Table["id"] | undefined;
-  const StorageKey = "tableId";
-  const { getItem, setItem, removeItem } = useAsyncStorage(StorageKey);
-  const [currentTableId, setCurrentTableId] = useState<StorageType>();
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    (async () => {
-      setCurrentTableId((await getItem()) || undefined);
-      setLoading(false);
-    })();
-  }, [getItem, setCurrentTableId]);
-
-  const changeCurrentTableId = useCallback(
-    async (id: StorageType) => {
-      if (id) await setItem(id);
-      else await removeItem();
-      setCurrentTableId(id);
-    },
-    [setItem, setCurrentTableId]
-  );
-
-  return {
-    currentTableId,
-    changeCurrentTableId,
-    loading,
-  };
-}
-
-export function useTableProvider() {
-  const {
-    currentTableId,
-    changeCurrentTableId,
-    loading: idLoading,
-  } = useCurrentTableId();
-  const [table, loading, error] = useObservableStateFromFBDocRef(
-    () => getTableById(currentTableId!),
-    [currentTableId]
-  );
-
+export function useTable() {
+  const { table } = useContext(TableContext);
   return useMemo(() => {
+    const ready = async () => await readyTable({ id: table!.id });
+    const prepare = async () => await prepareTable({ id: table!.id });
+    const occupy = async () => await occupyTable({ id: table!.id });
+    const unoccupy = async () => await unoccupyTable({ id: table!.id });
+    const pay = async () => {};
     const order = async (
       productId: Product["id"],
       optionSelections: {
         [optionId: string]: { [selectionId: string]: boolean };
       }
     ) => {
-      const product = (await getProductById(productId).get()).data() as Product;
-
       await orderByTableId(table!.id, {
-        product: {
-          id: productId,
-          price: product.price,
-          optionSelections: optionSelections,
-        },
+        productId: productId,
+        optionSelections: optionSelections,
         discounts: [],
       });
     };
 
     return {
-      table: table && {
-        ...table,
-        ready: () => readyTable(table!),
-        prepare: () => prepareTable(table!),
-        occupy: () => occupyTable(table!),
-        unoccupy: () => unoccupyTable(table!),
-        order,
-      },
-      loading: idLoading && loading,
-      error,
-      changeTable: changeCurrentTableId,
+      ...table!,
+      ready,
+      prepare,
+      occupy,
+      unoccupy,
+      pay,
+      order,
     };
-  }, [table, currentTableId, loading, error]);
-}
-
-export function useTable() {
-  const { table } = useContext(TableContext);
-  return table!;
+  }, [table]);
 }
 
 export function useTableSelector() {
@@ -117,4 +64,44 @@ export function useAllTableSummariesByStoreId(storeId: string) {
     [storeId]
   );
   return { tableSummaries, loading, error };
+}
+
+export function useTableOrdersFromTable(table: Table) {
+  return useMemo(
+    () =>
+      table.occupation
+        ? Object.entries(table.occupation.orders).map(([id, obj]) => ({
+            id,
+            ...obj,
+          }))
+        : [],
+    [table.occupation]
+  );
+}
+
+export function useTotalPriceFromTable(table: Table, currencyCode: string) {
+  const orders = useTableOrdersFromTable(table);
+  const totalPrice$ = useObservable(
+    (inputs$) =>
+      inputs$.pipe(
+        map(([orders]) =>
+          orders.filter(({ status }) => status !== "CANCELLED")
+        ),
+        switchMap(async (orders) => {
+          const productSnapshots = await Promise.all(
+            orders.map(({ productId }) => getProductById(productId).get())
+          );
+          const products = productSnapshots.map(
+            (s) => snapToData(s, "id") as Product
+          );
+          return products.reduce(
+            (totalPrice, { price }) => totalPrice + price[currencyCode],
+            0
+          );
+        })
+      ),
+    [orders]
+  );
+
+  return useObservableState(totalPrice$, 0);
 }

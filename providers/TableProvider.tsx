@@ -1,15 +1,12 @@
-import React, { ReactNode, createContext } from "react";
+import React, { createContext } from "react";
 
-import { useTableProvider } from "../hooks";
+import { useTableProvider } from "../hooks/tableProviders";
 
 export const TableContext = createContext<ReturnType<typeof useTableProvider>>(
   {} as any
 );
 
-type Props = {
-  children: ReactNode;
-};
-function TableProvider({ children }: Props) {
+function TableProvider({ children }: React.Component["props"]) {
   const value = useTableProvider();
   return (
     <TableContext.Provider value={value}>{children}</TableContext.Provider>

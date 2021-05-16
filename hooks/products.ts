@@ -11,6 +11,10 @@ import { collectionData, docData } from "rxfire/firestore";
 import { filter, map, switchMap } from "rxjs/operators";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { useObservable, useObservableState } from "observable-hooks";
+import {
+  useObservableStateFromFBColRef,
+  useObservableStateFromFBDocRef,
+} from "./utilities";
 
 export type { Product };
 export type ProductCategory = Omit<FBProductCategory, "parentId"> & {
@@ -31,7 +35,7 @@ export function useProductSummariesByCategoryIds(categoryIds: string[]) {
 
   const state = useObservableState(state$);
 
-  return state || [];
+  return { productSummaries: state || [] };
 }
 
 export function useProductCategoriesByIds(categoryIds: string[]) {
@@ -81,19 +85,15 @@ export function useProductCategoryIdsFromProducts(products: Product[]) {
 }
 
 export function useRootProductCategoriesByStoreId(storeId: string) {
-  const state$ = useObservable(
-    (inputs$) =>
-      inputs$.pipe(
-        map(([storeId]) => listProductCategoriesByStoreId(storeId)),
-        switchMap((ref) => collectionData<FBProductCategory>(ref, "id")),
-        map((x) => x.filter((y) => !y.parentId))
-      ),
+  const [productCategories, loading, error] = useObservableStateFromFBColRef(
+    () => listProductCategoriesByStoreId(storeId),
     [storeId]
   );
-
-  const state = useObservableState(state$);
-
-  return state || [];
+  return {
+    productCategories: productCategories.filter((summary) => !summary.parentId),
+    loading,
+    error,
+  };
 }
 
 export function useProductCategoriesByParentId(parentId: string) {
@@ -112,16 +112,9 @@ export function useProductCategoriesByParentId(parentId: string) {
 }
 
 export function useProductById(id: string) {
-  const state$ = useObservable(
-    (inputs$) =>
-      inputs$.pipe(
-        map(([id]) => getProductById(id)),
-        switchMap((ref) =>
-          docData<Product>(ref, "id").pipe(map((value) => ({ ref, value })))
-        )
-      ),
+  const [product, loading, error] = useObservableStateFromFBDocRef(
+    () => getProductById(id),
     [id]
   );
-  const state = useObservableState(state$);
-  return { product: state?.value };
+  return { product, loading, error };
 }

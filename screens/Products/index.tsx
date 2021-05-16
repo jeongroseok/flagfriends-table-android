@@ -38,7 +38,13 @@ function Products() {
   const navigation = useNavigation();
   const languageCode = useLanguageCode();
   const store = useStore();
-  const categories = useRootProductCategoriesByStoreId(store.id);
+  const { productCategories, loading } = useRootProductCategoriesByStoreId(
+    store.id
+  );
+
+  if (loading || productCategories.length <= 0) {
+    return <Text>loading</Text>;
+  }
 
   return (
     <>
@@ -59,7 +65,7 @@ function Products() {
           },
         }}
       >
-        {categories.map(({ id, name }) => (
+        {productCategories.map(({ id, name }) => (
           <Tab.Screen
             key={id}
             name={name[languageCode]}
@@ -67,7 +73,6 @@ function Products() {
             component={ProductList}
           />
         ))}
-        <Tab.Screen name="cart" component={Cart} />
       </Tab.Navigator>
 
       <Overlapping style={{ flexDirection: "row", alignItems: "flex-end" }}>

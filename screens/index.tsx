@@ -27,7 +27,7 @@ function Screens() {
   } = useTableSelector();
   const loading = storeLoading || tableLoading;
   const ok = store && table; // 변수명 바꿀 것
-
+  console.log(`store: ${store}, table: ${table}`);
   if (loading) {
     return <Text>loading</Text>;
   }
@@ -76,7 +76,11 @@ function Screens() {
               options={{ title: "상품목록" }}
             />
             <Stack.Screen name="productDetails" component={ProductDetails} />
-            <Stack.Screen name="productOrders" component={ProductOrders} />
+            <Stack.Screen
+              name="productOrders"
+              component={ProductOrders}
+              options={{ title: "주문목록" }}
+            />
             <Stack.Screen name="preferences" component={Preferences} />
           </>
         ) : (

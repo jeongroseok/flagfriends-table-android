@@ -1,7 +1,7 @@
 import { Pressable, Text } from "react-native";
 
 import CircularMenu from "./CircularMenu";
-import IconBill from "../../assets/ficon2.svg";
+import IconBill from "../../assets/ficon13.svg";
 import IconCall from "../../assets/ficon9.svg";
 import IconGame from "../../assets/ficon3.svg";
 import IconGift from "../../assets/ficon4.svg";
@@ -27,9 +27,8 @@ const DisabledMenuItem = styled.Pressable`
 
 enum MainMenuItem {
   직원호출,
-  중간계산서요청,
-  제품주문,
   주문목록,
+  제품주문,
 }
 type Props = {
   onPress?: (item: MainMenuItem) => void;
@@ -51,16 +50,16 @@ function MainMenu({ onPress, onLongPress }: Props) {
       center={<IconLogo width={60} height={60} fill={"white"} />}
       onLongPress={onLongPress}
     >
-      <TouchableOpacity onPress={() => onPress?.(MainMenuItem.중간계산서요청)}>
+      <TouchableOpacity onPress={() => onPress?.(MainMenuItem.주문목록)}>
         <MenuItem>
           <IconCall width={50} height={50} fill="black" />
           <Text>직원 호출</Text>
         </MenuItem>
       </TouchableOpacity>
-      <TouchableOpacity onPress={() => onPress?.(MainMenuItem.중간계산서요청)}>
+      <TouchableOpacity onPress={() => onPress?.(MainMenuItem.주문목록)}>
         <MenuItem>
           <IconBill width={50} height={50} fill="black" />
-          <Text>중간계산서 요청</Text>
+          <Text>주문 목록</Text>
         </MenuItem>
       </TouchableOpacity>
       <TouchableOpacity onPress={() => onPress?.(MainMenuItem.제품주문)}>
@@ -80,13 +79,6 @@ function MainMenu({ onPress, onLongPress }: Props) {
           <IconGift width={50} height={50} fill="black" />
           <Text>테이블 메세징</Text>
         </DisabledMenuItem>
-      </TouchableOpacity>
-      <TouchableOpacity onPress={() => onPress?.(MainMenuItem.주문목록)}>
-        <MenuItem>
-          <IconGame width={50} height={50} fill="black" />
-          <Text>주문 목록</Text>
-          <Text>(테스트)</Text>
-        </MenuItem>
       </TouchableOpacity>
     </CircularMenu>
   );

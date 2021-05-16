@@ -90,20 +90,20 @@ export default function ({ categoryId, onProductPress }: Props) {
       Object.fromEntries(categories.map((category) => [category.id, category])),
     [categories]
   );
-  const products = useProductSummariesByCategoryIds(
+  const { productSummaries } = useProductSummariesByCategoryIds(
     useMemo(() => categories.map((x) => x.id), [categories])
   );
   const sections = useMemo(() => {
     const sections: { [categoryId: string]: Product[] } = {};
-    for (const product of products) {
+    for (const product of productSummaries) {
       sections[product.categoryId] = sections[product.categoryId] || [];
       sections[product.categoryId].push(product);
     }
-    return Object.entries(sections).map(([categoryId, products]) => ({
+    return Object.entries(sections).map(([categoryId, productSummaries]) => ({
       title: categoryLookup[categoryId].name[languageCode],
-      data: products,
+      data: productSummaries,
     }));
-  }, [products, categoryLookup]);
+  }, [productSummaries, categoryLookup]);
 
   return (
     <SectionList
