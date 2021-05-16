@@ -4,8 +4,8 @@ import { Colors } from "../../styles";
 import { FlatList } from "react-native";
 import ListFooter from "./ListFooter";
 import ListItem from "./ListItem";
-import { useRecoilState } from "recoil";
 import { useCart } from "../../hooks/carts";
+import { useRecoilState } from "recoil";
 
 // function useProductsFromCart() {
 //   const [cart, setCart] = useRecoilState(cartState);

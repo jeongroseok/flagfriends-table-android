@@ -8,6 +8,7 @@ import React from "react";
 import { RecoilRoot } from "recoil";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 import { Screens } from "./screens";
+import Test from "./Test";
 import { Text } from "react-native";
 import { useCommonSettings } from "./styles";
 
@@ -22,7 +23,7 @@ export default function App() {
 
   return (
     <SafeAreaProvider>
-      <RecoilRoot>
+      {/* <RecoilRoot>
         <LocaleProvider>
           <StoreProvider>
             <TableProvider>
@@ -30,7 +31,8 @@ export default function App() {
             </TableProvider>
           </StoreProvider>
         </LocaleProvider>
-      </RecoilRoot>
+      </RecoilRoot> */}
+      <Test />
     </SafeAreaProvider>
   );
 }

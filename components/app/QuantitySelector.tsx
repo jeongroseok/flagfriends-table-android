@@ -8,7 +8,7 @@ const iconPlus = require("../../assets/icon_plus.png");
 
 type Props = {
   value: number;
-  onChange: (value: number) => void;
+  onChange?: (value: number) => void;
 };
 function QuantitySelector({ value, onChange }: Props) {
   return (
@@ -20,7 +20,7 @@ function QuantitySelector({ value, onChange }: Props) {
       }}
     >
       <TouchableOpacity
-        onPress={() => onChange(value - 1)}
+        onPress={() => onChange?.(value - 1)}
         style={{ opacity: value > 1 ? 1 : 0.1 }}
         disabled={value <= 1}
       >
@@ -38,7 +38,7 @@ function QuantitySelector({ value, onChange }: Props) {
       >
         {value}
       </Text>
-      <TouchableOpacity onPress={() => onChange(value + 1)}>
+      <TouchableOpacity onPress={() => onChange?.(value + 1)}>
         <Image style={{ width: 36, height: 36 }} source={iconPlus} />
       </TouchableOpacity>
     </View>
