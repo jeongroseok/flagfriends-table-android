@@ -1,5 +1,6 @@
 import { LayoutChangeEvent, ScrollView, Text, View } from "react-native";
 import React, { useCallback, useEffect, useState } from "react";
+import { useStore, useTable } from "../../../hooks";
 
 import Indicator from "./Indicator";
 import WebView from "react-native-webview";
@@ -10,6 +11,8 @@ type Props = {
 };
 
 function Slider({ storeId }: Props) {
+  const store = useStore();
+  const table = useTable();
   const [value, setValue] = useState<number>(0);
   const [size, setSize] = useState<{ width: number; height: number }>();
 
@@ -30,13 +33,10 @@ function Slider({ storeId }: Props) {
   );
 
   const notifications = useNotificationSummariesByStoreId(storeId);
-  const injectedJavascript = `window.__store__ = {
-    storeId: '${storeId}',
-    operation: {
-      openTime: ${Date.now() - 1000000},
-      closeTime: ${Date.now() - 1000000},
-    }
-  }`;
+  const injectedJavascript = `window.__app__ = ${JSON.stringify({
+    storeId: store.id,
+    tableId: table.id,
+  })}`;
 
   return (
     <View onLayout={onLayout} style={{ flex: 1 }}>
