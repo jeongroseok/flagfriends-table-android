@@ -58,7 +58,7 @@ function ListFooter() {
         backgroundColor: Colors.fancygray,
       }}
     >
-      <Text
+      {/* <Text
         style={[
           Styles.textExtraSmall,
           Styles.textRegular,
@@ -72,7 +72,7 @@ function ListFooter() {
       >
         가래떡(외국산), 고추가루(국내산/중국산혼합), 어묵(수입산), 계란(국내산),
         치킨(국내산)
-      </Text>
+      </Text> */}
     </View>
   );
 }

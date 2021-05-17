@@ -44,7 +44,7 @@ function CartSheet() {
           { marginTop: 6, color: "white", textAlign: "center" },
         ]}
       >
-        담은 상품
+        장바구니 (위로 올리기)
       </Text>
       <View
         style={{
