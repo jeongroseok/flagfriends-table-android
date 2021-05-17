@@ -1,17 +1,21 @@
 import { Colors, Styles } from "../../styles";
 import { Dimensions, Text, View } from "react-native";
+import React, { useState } from "react";
 import { useCart, useTotalPriceFromCartItems } from "../../hooks/carts";
+import { useCurrencyCode, useTable } from "../../hooks";
 
 import BottomSheet from "reanimated-bottom-sheet";
 import List from "./List";
-import React from "react";
 import { TouchableOpacity } from "react-native-gesture-handler";
-import { useCurrencyCode } from "../../hooks";
 
 function CartSheet() {
   const currencyCode = useCurrencyCode();
-  const { items, addItem, changeItemQuantity, deleteItem } = useCart();
+  const table = useTable();
+  const { items, addItem, changeItemQuantity, deleteItem, clear } = useCart();
   const totalPrice = useTotalPriceFromCartItems(items, currencyCode);
+  const [pending, setPending] = useState(false);
+  const orderDisabled = pending || items.length <= 0;
+
   const renderContent = () => (
     <View
       style={{
@@ -78,23 +82,35 @@ function CartSheet() {
           </Text>
         </View>
         <TouchableOpacity
-          onPress={() => {
-            addItem({
-              productId: "5MImdFtFbItkOCLMJ9gF",
-              optionSelections: {},
-              quantity: 1,
+          disabled={orderDisabled}
+          onPress={async () => {
+            if (table.status !== "OCCUPIED") {
+              await table.occupy();
+            }
+            await items.map(async (item) => {
+              for (let i = 0; i < item.quantity; i++)
+                await table.order(item.productId, item.optionSelections);
             });
+            alert("주문 완료");
+            clear();
           }}
           style={{
             margin: 10,
             padding: 20,
             borderRadius: 32,
-            backgroundColor: "#1E2326",
+            backgroundColor: orderDisabled ? "#1E232666" : "#1E2326",
             justifyContent: "center",
             alignItems: "center",
           }}
         >
-          <Text style={[Styles.textNormal, { color: "white" }]}>주문하기</Text>
+          <Text
+            style={[
+              Styles.textNormal,
+              { color: orderDisabled ? "#FFFFFF66" : "#FFF" },
+            ]}
+          >
+            주문하기
+          </Text>
         </TouchableOpacity>
       </View>
     </View>
