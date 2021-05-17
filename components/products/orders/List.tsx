@@ -19,26 +19,33 @@ import { useRecoilState } from "recoil";
 
 type Props = {
   table: Table;
+  style?: FlatList["props"]["style"];
 };
-function List({ table }: Props) {
+function List({ table, style }: Props) {
   const currencyCode = useCurrencyCode();
   const orders = useTableOrdersFromTable(table);
   const totalPrice = useTotalPriceFromTable(table, currencyCode);
 
   return (
     <FlatList
-      style={{
-        backgroundColor: "white",
-        marginTop: 30,
-        marginHorizontal: 15,
-        paddingTop: 20,
-        paddingHorizontal: 10,
-        borderRadius: 20,
-        borderTopWidth: 1,
-        borderTopColor: Colors.lightGray,
-      }}
-      data={orders}
-      keyExtractor={(item, index) => item.productId}
+      style={[
+        style,
+        {
+          backgroundColor: "white",
+          marginTop: 30,
+          marginHorizontal: 15,
+          paddingTop: 20,
+          paddingHorizontal: 10,
+          borderRadius: 20,
+          borderTopWidth: 1,
+          borderTopColor: Colors.lightGray,
+        },
+      ]}
+      scrollEnabled={false}
+      data={orders.sort((a, b) => a.createdAt.seconds - b.createdAt.seconds)}
+      keyExtractor={(item, index) =>
+        item.productId + item.createdAt.nanoseconds
+      }
       renderItem={({ item, index }) => <ListItem item={item} />}
       ListFooterComponent={() => <ListFooter totalPrice={totalPrice} />}
     />

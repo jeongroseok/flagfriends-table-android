@@ -99,10 +99,13 @@ export default function ({ categoryId, onProductPress }: Props) {
       sections[product.categoryId] = sections[product.categoryId] || [];
       sections[product.categoryId].push(product);
     }
-    return Object.entries(sections).map(([categoryId, productSummaries]) => ({
-      title: categoryLookup[categoryId].name[languageCode],
-      data: productSummaries,
-    }));
+    return Object.entries(sections)
+      .map(([categoryId, productSummaries]) => ({
+        title: categoryLookup[categoryId].name[languageCode],
+        order: categoryLookup[categoryId].order,
+        data: productSummaries,
+      }))
+      .sort((pc1, pc2) => pc1.order - pc2.order);
   }, [productSummaries, categoryLookup]);
 
   return (

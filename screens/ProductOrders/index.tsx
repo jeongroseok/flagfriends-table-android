@@ -3,6 +3,7 @@ import { Text, View } from "react-native";
 import { Colors } from "../../styles";
 import { List as ProductOrderList } from "../../components/products/orders";
 import React from "react";
+import { ScrollView } from "react-native-gesture-handler";
 import { useNavigation } from "@react-navigation/native";
 import { useTable } from "../../hooks";
 
@@ -11,15 +12,21 @@ function ProductOrders() {
   const table = useTable();
 
   return (
-    <View
+    <ScrollView
       style={{
+        display: "flex",
         backgroundColor: Colors.fancygray,
         paddingHorizontal: 20,
         marginTop: 4,
       }}
     >
       <ProductOrderList table={table} />
-      <View style={{ paddingVertical: 26, paddingHorizontal: 8 }}>
+      <View
+        style={{
+          paddingVertical: 26,
+          paddingHorizontal: 8,
+        }}
+      >
         {[
           {
             text: `결제 시 테이블 번호 ${table.name}을(를) 말씀해 주세요.`,
@@ -49,7 +56,7 @@ function ProductOrders() {
           </View>
         ))}
       </View>
-    </View>
+    </ScrollView>
   );
 }
 export default ProductOrders;

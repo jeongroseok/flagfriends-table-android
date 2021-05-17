@@ -25,6 +25,7 @@ export interface ProductCategory {
   readonly id: string;
   readonly storeId: string;
   readonly parentId?: ProductCategory["id"];
+  order: number;
   name: { [code: string]: string };
 }
 

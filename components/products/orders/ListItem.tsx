@@ -76,6 +76,7 @@ export default function ListItem({ item }: Props) {
           style={[Styles.textSmall, Styles.textRegular, { lineHeight: 22 }]}
         >
           {product?.name[languageCode]}
+          {item.status === "COMPLETED" && " ✔️"}
         </Text>
         <Text
           style={[
@@ -84,7 +85,7 @@ export default function ListItem({ item }: Props) {
             { lineHeight: 14 },
           ]}
         >
-          ({optionsDescription})
+          {optionsDescription}
         </Text>
       </View>
       <View
@@ -98,7 +99,7 @@ export default function ListItem({ item }: Props) {
       >
         <Text style={[Styles.textExtraSmall, { color: "gray" }]}>
           {moment((item.createdAt as any).toDate?.() || new Date()).format(
-            "HH:mm"
+            "DD일 HH시 mm분"
           )}
         </Text>
         <Text style={{ color: Colors.red }}>

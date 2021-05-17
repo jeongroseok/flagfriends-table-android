@@ -70,14 +70,16 @@ function Products() {
           },
         }}
       >
-        {productCategories.map(({ id, name }) => (
-          <Tab.Screen
-            key={id}
-            name={name[languageCode]}
-            initialParams={{ storeId: store.id, categoryId: id }}
-            component={ProductList}
-          />
-        ))}
+        {productCategories
+          .sort((pc1, pc2) => pc1.order - pc2.order)
+          .map(({ id, name }) => (
+            <Tab.Screen
+              key={id}
+              name={name[languageCode]}
+              initialParams={{ storeId: store.id, categoryId: id }}
+              component={ProductList}
+            />
+          ))}
       </Tab.Navigator>
     </>
   );
