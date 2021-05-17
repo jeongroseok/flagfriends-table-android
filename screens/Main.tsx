@@ -7,15 +7,17 @@ import {
   View,
 } from "react-native";
 import React, { useCallback } from "react";
+import { useStore, useTable } from "../hooks";
 
 import { MainMenu as AppMainMenu } from "../components/app";
 import { Slider as NotificationSlider } from "../components/notifications";
 import { StatusBar } from "expo-status-bar";
+import firebase from "firebase";
 import { useNavigation } from "@react-navigation/native";
-import { useStore } from "../hooks";
 
 function Main() {
   const store = useStore();
+  const table = useTable();
   const navigation = useNavigation();
   const handleHiddenOperation = useCallback(() => {
     const buttons: AlertButton[] = [
@@ -32,6 +34,14 @@ function Main() {
       buttons
     );
   }, []);
+
+  const handleCreateCalling = useCallback(
+    async (message) => {
+      const callingsRef = firebase.database().ref("callings");
+      await callingsRef.push({ tableId: table.id, message });
+    },
+    [table]
+  );
 
   if (!store) {
     return (
@@ -52,6 +62,20 @@ function Main() {
         onLongPress={handleHiddenOperation}
         onPress={(item) => {
           switch (item) {
+            case 0:
+              (() => {
+                const buttons: AlertButton[] = [
+                  { text: "취소", style: "cancel" },
+                  {
+                    text: "확인",
+                    style: "default",
+                    onPress: () => handleCreateCalling("호출"),
+                  },
+                ];
+
+                Alert.alert("알림", "호출하시겠습니까?", buttons);
+              })();
+              break;
             case 1:
               navigation.navigate("productOrders");
               break;

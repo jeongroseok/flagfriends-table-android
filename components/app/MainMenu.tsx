@@ -50,7 +50,7 @@ function MainMenu({ onPress, onLongPress }: Props) {
       center={<IconLogo width={60} height={60} fill={"white"} />}
       onLongPress={onLongPress}
     >
-      <TouchableOpacity onPress={() => onPress?.(MainMenuItem.주문목록)}>
+      <TouchableOpacity onPress={() => onPress?.(MainMenuItem.직원호출)}>
         <MenuItem>
           <IconCall width={50} height={50} fill="black" />
           <Text>직원 호출</Text>
