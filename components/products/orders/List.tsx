@@ -2,6 +2,7 @@ import { FlatList, Text } from "react-native";
 import React, { useCallback, useState } from "react";
 import {
   Table,
+  TableOrder,
   useCurrencyCode,
   useTable,
   useTableOrdersFromTable,
@@ -42,7 +43,13 @@ function List({ table, style }: Props) {
         },
       ]}
       scrollEnabled={false}
-      data={orders.sort((a, b) => a.createdAt.seconds - b.createdAt.seconds)}
+      data={orders
+        .filter((order) =>
+          (
+            ["COMPLETED", "PENDING", "PROCESSING"] as TableOrder["status"][]
+          ).includes(order.status)
+        )
+        .sort((a, b) => a.createdAt.seconds - b.createdAt.seconds)}
       keyExtractor={(item, index) =>
         item.productId + item.createdAt.nanoseconds
       }

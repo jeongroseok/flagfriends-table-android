@@ -1,24 +1,21 @@
 import {
-  Notification,
-  getNotificationById,
-  listNotificationsByStoreId,
-} from "../firebase/notifications";
+  Banner,
+  getBannerById,
+  listBannersByStoreId,
+} from "../firebase/banners";
 import { collectionData, docData } from "rxfire/firestore";
 import { map, switchMap } from "rxjs/operators";
 import { useObservable, useObservableState } from "observable-hooks";
 
-export type { Notification };
+export type { Banner };
 
 /* Hooks */
-export function useNotificationSummariesByStoreId(storeId: string) {
+export function useBannerSummariesByStoreId(storeId: string) {
   const state$ = useObservable(
     (inputs$) =>
       inputs$.pipe(
         switchMap(([storeId]) =>
-          collectionData<Notification>(
-            listNotificationsByStoreId(storeId),
-            "id"
-          )
+          collectionData<Banner>(listBannersByStoreId(storeId), "id")
         )
       ),
     [storeId]
@@ -26,15 +23,13 @@ export function useNotificationSummariesByStoreId(storeId: string) {
   return useObservableState(state$) || [];
 }
 
-export function useNotificationById(id: string) {
+export function useBannerById(id: string) {
   const state$ = useObservable(
     (inputs$) =>
       inputs$.pipe(
-        map(([id]) => getNotificationById(id)),
+        map(([id]) => getBannerById(id)),
         switchMap((ref) =>
-          docData<Notification>(ref, "id").pipe(
-            map((value) => ({ ref, value }))
-          )
+          docData<Banner>(ref, "id").pipe(map((value) => ({ ref, value })))
         )
       ),
     [id]

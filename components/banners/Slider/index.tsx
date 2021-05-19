@@ -4,7 +4,7 @@ import { useStore, useTable } from "../../../hooks";
 
 import Indicator from "./Indicator";
 import WebView from "react-native-webview";
-import { useNotificationSummariesByStoreId } from "../../../hooks/notifications";
+import { useBannerSummariesByStoreId } from "../../../hooks/banners";
 
 type Props = {
   storeId: string;
@@ -32,7 +32,7 @@ function Slider({ storeId }: Props) {
     [size]
   );
 
-  const notifications = useNotificationSummariesByStoreId(storeId);
+  const banners = useBannerSummariesByStoreId(storeId);
   const injectedJavascript = `window.__app__ = ${JSON.stringify({
     storeId: store.id,
     tableId: table.id,
@@ -48,11 +48,11 @@ function Slider({ storeId }: Props) {
           showsHorizontalScrollIndicator={false}
           onScroll={onScroll}
         >
-          {notifications.map((notification, index) => (
+          {banners.map((banner, index) => (
             <WebView
               key={index}
               style={{ ...size, backgroundColor: "transparent" }}
-              source={{ html: notification.content as string }}
+              source={{ html: banner.content as string }}
               injectedJavaScriptBeforeContentLoaded={injectedJavascript}
             />
           ))}
@@ -76,7 +76,7 @@ function Slider({ storeId }: Props) {
         <Indicator
           style={{ marginTop: 24, width: "80%", height: 4 }}
           value={value}
-          steps={notifications.length}
+          steps={banners.length}
         />
       </View>
     </View>

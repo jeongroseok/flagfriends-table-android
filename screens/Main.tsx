@@ -10,7 +10,7 @@ import React, { useCallback } from "react";
 import { useStore, useTable } from "../hooks";
 
 import { MainMenu as AppMainMenu } from "../components/app";
-import { Slider as NotificationSlider } from "../components/notifications";
+import { Slider as BannerSlider } from "../components/banners";
 import { StatusBar } from "expo-status-bar";
 import firebase from "firebase";
 import { useNavigation } from "@react-navigation/native";
@@ -57,7 +57,7 @@ function Main() {
 
   return (
     <View style={styles.container}>
-      <NotificationSlider storeId={store.id} />
+      <BannerSlider storeId={store.id} />
       <AppMainMenu
         onLongPress={handleHiddenOperation}
         onPress={(item) => {
