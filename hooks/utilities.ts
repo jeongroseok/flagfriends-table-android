@@ -26,10 +26,16 @@ export function useObservableStateFromFBDocRef<T>(
           : undefined
       )
     );
-    const subscription = $.subscribe((data) => {
-      setLoading(false);
-      setData(data);
-    }, setError);
+    const subscription = $.subscribe(
+      (data) => {
+        setLoading(false);
+        setData(data);
+      },
+      (error) => {
+        setLoading(false);
+        setError(error);
+      }
+    );
     return () => subscription.unsubscribe();
   }, deps);
 
@@ -59,10 +65,16 @@ export function useObservableStateFromFBColRef<T>(
           .map((snapshot) => snapToData(snapshot, idField || "id") as T)
       )
     );
-    const subscription = $.subscribe((data) => {
-      setLoading(false);
-      setData(data);
-    }, setError);
+    const subscription = $.subscribe(
+      (data) => {
+        setLoading(false);
+        setData(data);
+      },
+      (error) => {
+        setLoading(false);
+        setError(error);
+      }
+    );
     return () => subscription.unsubscribe();
   }, deps);
 

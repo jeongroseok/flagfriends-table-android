@@ -1,83 +1,76 @@
-import { LayoutChangeEvent, ScrollView, Text, View } from "react-native";
+import { LayoutChangeEvent, View } from "react-native";
 import React, { useCallback, useEffect, useState } from "react";
-import { useStore, useTable } from "../../../hooks";
 
-import Indicator from "./Indicator";
-import WebView from "react-native-webview";
-import { useBannerSummariesByStoreId } from "../../../hooks/banners";
+import BannerView from "../BannerView";
+import { CenteredText } from "../../app";
+import NavigationButton from "./NavigationButton";
+import { useAvailableBannersByStoreId } from "../../../hooks/banners";
 
 type Props = {
   storeId: string;
 };
 
 function Slider({ storeId }: Props) {
-  const store = useStore();
-  const table = useTable();
-  const [value, setValue] = useState<number>(0);
   const [size, setSize] = useState<{ width: number; height: number }>();
+  const { banners, loading, error } = useAvailableBannersByStoreId(storeId);
+  const [index, setIndex] = useState(0);
+
+  useEffect(() => {
+    console.log("새로운 배너 선택");
+    setIndex(Math.floor(Math.random() * banners.length));
+  }, [banners]);
 
   const onLayout = useCallback(({ nativeEvent }: LayoutChangeEvent) => {
     const { width, height } = nativeEvent.layout;
     setSize({ width, height });
   }, []);
 
-  const onScroll = useCallback(
-    ({ nativeEvent }) => {
-      if (size) {
-        setValue(nativeEvent.contentOffset.x / size.width);
-      } else {
-        setValue(0);
-      }
-    },
-    [size]
-  );
+  if (loading) {
+    return <CenteredText text="LOADING" />;
+  }
 
-  const banners = useBannerSummariesByStoreId(storeId);
-  const injectedJavascript = `window.__app__ = ${JSON.stringify({
-    storeId: store.id,
-    tableId: table.id,
-  })}`;
+  if (error) {
+    return <CenteredText text={error} />;
+  }
+
+  if (banners.length <= 0) {
+    return <CenteredText text="등록된 배너 없음" />;
+  }
 
   return (
     <View onLayout={onLayout} style={{ flex: 1 }}>
       {size && (
-        <ScrollView
-          horizontal={true}
-          scrollEventThrottle={16}
-          pagingEnabled={true}
-          showsHorizontalScrollIndicator={false}
-          onScroll={onScroll}
-        >
-          {banners.map((banner, index) => (
-            <WebView
-              key={index}
-              style={{ ...size, backgroundColor: "transparent" }}
-              source={{ html: banner.content as string }}
-              injectedJavaScriptBeforeContentLoaded={injectedJavascript}
-            />
-          ))}
-          {/* {children &&
-            children.map((child, index) => (
-              <View key={index} style={{ ...size }}>
-                {child}
-              </View>
-            ))} */}
-        </ScrollView>
+        <BannerView
+          style={{ ...size, backgroundColor: "transparent" }}
+          banner={banners[index]}
+        />
       )}
       <View
-        pointerEvents={"none"}
         style={{
           position: "absolute",
-          top: 130,
-          padding: 48,
           width: "100%",
+          height: "100%",
+          display: "flex",
+          justifyContent: "center",
         }}
       >
-        <Indicator
-          style={{ marginTop: 24, width: "80%", height: 4 }}
-          value={value}
-          steps={banners.length}
-        />
+        <View
+          style={{
+            flexDirection: "row",
+            justifyContent: "space-between",
+          }}
+        >
+          <NavigationButton
+            style={{ width: 64, height: 64, margin: 24 }}
+            direction="LEFT"
+            onPress={() => setIndex(Math.max(0, index - 1))}
+          />
+          <NavigationButton
+            style={{ width: 64, height: 64, margin: 24 }}
+            direction="RIGHT"
+            onPress={() => setIndex(Math.min(banners.length - 1, index + 1))}
+          />
+        </View>
       </View>
     </View>
   );

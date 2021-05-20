@@ -1,3 +1,5 @@
+import {} from "react-native-gesture-handler";
+
 import {
   Alert,
   AlertButton,
@@ -11,7 +13,6 @@ import { useStore, useTable } from "../hooks";
 
 import { MainMenu as AppMainMenu } from "../components/app";
 import { Slider as BannerSlider } from "../components/banners";
-import { StatusBar } from "expo-status-bar";
 import firebase from "firebase";
 import { useNavigation } from "@react-navigation/native";
 
@@ -43,7 +44,7 @@ function Main() {
     [table]
   );
 
-  if (!store) {
+  if (!store || !table) {
     return (
       <View>
         <Text>설정 필요!</Text>
@@ -54,6 +55,17 @@ function Main() {
       </View>
     );
   }
+
+  /**
+   *
+   *
+   *
+   * 제스쳐랑 웹뷰랑 같이 쓰면 뻑남!!
+   * View에 애니메이션 추가해서 좌우로 스와이프 하자
+   *
+   *
+   *
+   */
 
   return (
     <View style={styles.container}>

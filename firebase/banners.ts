@@ -7,7 +7,7 @@ export interface Banner {
   name: string;
   status: "HIDDEN" | "SHOW";
   priority: number;
-  content: { uri?: string } | string;
+  content: { uri?: string; html?: string };
 }
 
 const converter = {
@@ -29,6 +29,6 @@ const bannersRef = firebase
   .withConverter(converter);
 
 export const listBannersByStoreId = (storeId: string) =>
-  bannersRef.where("storeId", "==", storeId);
+  bannersRef.where("storeId", "==", storeId).orderBy("priority");
 
 export const getBannerById = (id: string) => bannersRef.doc(id);
