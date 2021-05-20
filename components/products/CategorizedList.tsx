@@ -5,7 +5,7 @@ import {
   useCurrencyCode,
   useLanguageCode,
   useProductCategoriesByParentId,
-  useProductSummariesByCategoryIds,
+  useProducts,
 } from "../../hooks";
 import React, { useMemo } from "react";
 
@@ -81,46 +81,46 @@ type Props = {
   categoryId: string;
   onProductPress: (id: string) => void;
 };
-export default function ({ categoryId, onProductPress }: Props) {
+type Section = { [categoryId: string]: Product[] };
+function CategorizedList({ categoryId, onProductPress }: Props) {
   const languageCode = useLanguageCode();
   const currencyCode = useCurrencyCode();
   const categories = useProductCategoriesByParentId(categoryId);
-  const categoryLookup = useMemo(
-    () =>
-      Object.fromEntries(categories.map((category) => [category.id, category])),
-    [categories]
-  );
-  const { productSummaries } = useProductSummariesByCategoryIds(
-    useMemo(() => categories.map((x) => x.id), [categories])
-  );
+  const products = useProducts();
   const sections = useMemo(() => {
-    const sections: { [categoryId: string]: Product[] } = {};
-    for (const product of productSummaries) {
+    // 카테고리ID로 카테고리 객체를 찾기 위한 룩업 테이블
+    const categoryLookup = Object.fromEntries(
+      categories.map((category) => [category.id, category])
+    );
+    const categoryIds = categories.map(({ id }) => id);
+    const sections: Section = {};
+
+    for (const product of products) {
+      if (!categoryIds.includes(product.categoryId)) continue;
       sections[product.categoryId] = sections[product.categoryId] || [];
       sections[product.categoryId].push(product);
     }
+
     return Object.entries(sections)
-      .map(([categoryId, productSummaries]) => ({
+      .map(([categoryId, products]) => ({
         title: categoryLookup[categoryId].name[languageCode],
         order: categoryLookup[categoryId].order,
-        data: productSummaries,
+        data: products,
       }))
       .sort((pc1, pc2) => pc1.order - pc2.order);
-  }, [productSummaries, categoryLookup]);
+  }, [categories, products]);
 
   return (
     <SectionList
       ListFooterComponent={ListFooter}
       style={{ backgroundColor: "white" }}
       sections={sections}
+      keyExtractor={(item, index) => item.id}
       renderItem={({ item, section }) => (
-        <ListItem
-          key={item.id}
-          productSummary={item}
-          onPress={onProductPress}
-        />
+        <ListItem productSummary={item} onPress={onProductPress} />
       )}
       renderSectionHeader={SectionHeader}
     />
   );
 }
+export default CategorizedList;

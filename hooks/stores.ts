@@ -1,4 +1,4 @@
-import { StoreContext } from "../providers/StoreProvider";
+import { AppContext } from "./apps";
 import { listStores } from "../firebase/stores";
 import { useContext } from "react";
 import { useObservableStateFromFBColRef } from "./utilities";
@@ -14,16 +14,5 @@ export function useStoreSummaries() {
 }
 
 export function useStore() {
-  const { store } = useContext(StoreContext);
-  return store!;
-}
-
-export function useStoreSelector() {
-  const { store, error, loading, changeStore } = useContext(StoreContext);
-  return {
-    store,
-    error,
-    loading,
-    changeStore,
-  };
+  return useContext(AppContext).store!;
 }

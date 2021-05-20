@@ -1,3 +1,8 @@
+import {
+  CenteredText,
+  Overlapping,
+  QuantitySelector,
+} from "../../components/app";
 import { Colors, Styles } from "../../styles";
 import {
   Image,
@@ -7,7 +12,6 @@ import {
   View,
   useWindowDimensions,
 } from "react-native";
-import { Overlapping, QuantitySelector } from "../../components/app";
 import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { useCurrencyCode, useLanguageCode, useProductById } from "../../hooks";
 import { useNavigation, useRoute } from "@react-navigation/native";
@@ -33,11 +37,12 @@ function ProductDetails() {
   const languageCode = useLanguageCode();
   const currencyCode = useCurrencyCode();
   const { width } = useWindowDimensions();
-  const { product } = useProductById((route.params as any).productId);
+  const product = useProductById((route.params as any).productId);
   const [options, setOptions] = useState();
   const [primaryOption, setPrimaryOption] = useState();
   const [secondaryOptions, setSecondaryOptions] = useState();
   const [quantity, setQuantity] = useState(1);
+  const [imageLoading, setImageLoading] = useState(true);
 
   const detailImage = useMemo(() => {
     if (!product?.media?.detail) return thumbDefault;
@@ -85,27 +90,36 @@ function ProductDetails() {
     navigation.goBack();
   }, [product, quantity, options]);
 
-  if (!product) {
-    return <Text>Loading...</Text>;
-  }
-
-  console.log(product);
-
   return (
     <View style={{ flex: 1, backgroundColor: "transparent" }}>
-      <View>
+      <View style={{ width, height: width }}>
         <Image
-          style={{
-            width: width,
-            height: width,
-            position: "absolute",
-            left: 0,
-            top: 0,
-          }}
+          width={width}
+          height={width}
+          style={{ width, height: width }}
+          onLoadEnd={() => setImageLoading(false)}
           source={detailImage}
         />
+        {imageLoading && (
+          <View
+            style={{
+              position: "absolute",
+              width: "100%",
+              height: "100%",
+            }}
+          >
+            <CenteredText>이미지 불러오는 중</CenteredText>
+          </View>
+        )}
       </View>
-      <ScrollView style={{ flex: 1 }}>
+      <ScrollView
+        style={{
+          width: "100%",
+          height: "100%",
+          position: "absolute",
+          top: 0,
+        }}
+      >
         <View
           style={{
             marginTop: width,
@@ -158,36 +172,39 @@ function ProductDetails() {
 
           <View
             style={{
+              padding: 30,
               backgroundColor: Colors.fancygray,
-              flexDirection: "row",
-              justifyContent: "center",
-              paddingTop: 30,
-              paddingBottom: 100,
+              alignItems: "center",
             }}
           >
-            <Image style={{ width: 20, height: 20 }} source={iconNotice} />
-            <Text
-              style={[
-                Styles.textTinySmall,
-                Styles.textRegular,
-                {
-                  textAlign: "center",
-                  paddingLeft: 6,
-                  lineHeight: 19,
-                },
-              ]}
+            <View
+              style={{
+                flexDirection: "row",
+                justifyContent: "center",
+              }}
             >
-              메뉴 사진은 실제 조리 음식과 다소 다를 수 있습니다.
-            </Text>
-          </View>
+              <Image style={{ width: 20, height: 20 }} source={iconNotice} />
+              <Text
+                style={[
+                  Styles.textTinySmall,
+                  Styles.textRegular,
+                  {
+                    textAlign: "center",
+                    paddingLeft: 6,
+                    lineHeight: 19,
+                  },
+                ]}
+              >
+                메뉴 사진은 실제 조리 음식과 다소 다를 수 있습니다.
+              </Text>
+            </View>
 
-          <Overlapping style={{ flexDirection: "row", alignItems: "flex-end" }}>
             <TouchableOpacity
               onPress={handleAddToCart}
               style={{
                 width: 192,
                 height: 64,
-                margin: 10,
+                marginTop: 32,
                 borderRadius: 32,
                 backgroundColor: "#1E2326",
                 justifyContent: "center",
@@ -198,7 +215,7 @@ function ProductDetails() {
                 장바구니
               </Text>
             </TouchableOpacity>
-          </Overlapping>
+          </View>
         </View>
       </ScrollView>
     </View>

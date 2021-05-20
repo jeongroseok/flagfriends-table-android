@@ -57,7 +57,7 @@ const productConverter = {
     snapshot: firebase.firestore.QueryDocumentSnapshot,
     options: firebase.firestore.SnapshotOptions
   ) {
-    const data = snapshot.data(options)!;
+    const data = snapshot.data(options);
     return { id: snapshot.id, ...data } as Product;
   },
 };
@@ -73,7 +73,7 @@ const productCategoryConverter = {
     snapshot: firebase.firestore.QueryDocumentSnapshot,
     options: firebase.firestore.SnapshotOptions
   ) {
-    const data = snapshot.data(options)!;
+    const data = snapshot.data(options);
     return { id: snapshot.id, ...data } as ProductCategory;
   },
 };
@@ -88,23 +88,10 @@ const productCategoriesRef = firebase
   .withConverter(productCategoryConverter);
 const productStorageRef = firebase.storage().ref("products");
 
-export const listProductsByCategoryIds = (categoryIds: string[]) =>
-  productsRef.where("categoryId", "in", categoryIds);
+export const listProductsByStoreId = (storeId: string) =>
+  productsRef.where("storeId", "==", storeId);
 
 export const getProductById = (id: string) => productsRef.doc(id);
 
-export const getProductCategoryById = (id: string) =>
-  productCategoriesRef.doc(id);
-
-export const listProductCategoriesByIds = (ids: string[]) =>
-  productCategoriesRef.where(
-    firebase.firestore.FieldPath.documentId(),
-    "in",
-    ids
-  );
-
 export const listProductCategoriesByStoreId = (storeId: string) =>
   productCategoriesRef.where("storeId", "==", storeId);
-
-export const listProductCategoriesByParentId = (parentId: string) =>
-  productCategoriesRef.where("parentId", "==", parentId);

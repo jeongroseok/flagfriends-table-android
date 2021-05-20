@@ -4,15 +4,13 @@ import React, { useCallback, useEffect, useState } from "react";
 import BannerView from "../BannerView";
 import { CenteredText } from "../../app";
 import NavigationButton from "./NavigationButton";
-import { useAvailableBannersByStoreId } from "../../../hooks/banners";
+import { useBanners } from "../../../hooks/banners";
 
-type Props = {
-  storeId: string;
-};
+type Props = {};
 
-function Slider({ storeId }: Props) {
+function Slider({}: Props) {
   const [size, setSize] = useState<{ width: number; height: number }>();
-  const { banners, loading, error } = useAvailableBannersByStoreId(storeId);
+  const banners = useBanners();
   const [index, setIndex] = useState(0);
 
   useEffect(() => {
@@ -25,16 +23,8 @@ function Slider({ storeId }: Props) {
     setSize({ width, height });
   }, []);
 
-  if (loading) {
-    return <CenteredText text="LOADING" />;
-  }
-
-  if (error) {
-    return <CenteredText text={error} />;
-  }
-
   if (banners.length <= 0) {
-    return <CenteredText text="등록된 배너 없음" />;
+    return <CenteredText>등록된 배너 없음</CenteredText>;
   }
 
   return (

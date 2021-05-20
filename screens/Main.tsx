@@ -20,6 +20,7 @@ function Main() {
   const store = useStore();
   const table = useTable();
   const navigation = useNavigation();
+
   const handleHiddenOperation = useCallback(() => {
     const buttons: AlertButton[] = [
       { text: "취소", style: "cancel" },
@@ -39,7 +40,12 @@ function Main() {
   const handleCreateCalling = useCallback(
     async (message) => {
       const callingsRef = firebase.database().ref("callings");
-      await callingsRef.push({ tableId: table.id, message });
+      await callingsRef.push({
+        storeId: store.id,
+        tableId: table.id,
+        message,
+        createdAt: firebase.database.ServerValue.TIMESTAMP,
+      });
     },
     [table]
   );
@@ -56,20 +62,9 @@ function Main() {
     );
   }
 
-  /**
-   *
-   *
-   *
-   * 제스쳐랑 웹뷰랑 같이 쓰면 뻑남!!
-   * View에 애니메이션 추가해서 좌우로 스와이프 하자
-   *
-   *
-   *
-   */
-
   return (
     <View style={styles.container}>
-      <BannerSlider storeId={store.id} />
+      <BannerSlider />
       <AppMainMenu
         onLongPress={handleHiddenOperation}
         onPress={(item) => {

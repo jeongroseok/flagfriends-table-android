@@ -19,7 +19,7 @@ type Props = {
 export default function ListItem({ item }: Props) {
   const languageCode = useLanguageCode();
   const currencyCode = useCurrencyCode();
-  const { product } = useProductById(item.productId);
+  const product = useProductById(item.productId);
   const thumbnailImage = useMemo(() => {
     if (!product?.media.thumbnail) return thumbDefault;
     return { uri: product.media.thumbnail };
@@ -47,7 +47,6 @@ export default function ListItem({ item }: Props) {
   return (
     <View
       style={{
-        flex: 1,
         alignItems: "center",
         flexDirection: "row",
         paddingVertical: 0,

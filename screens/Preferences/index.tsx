@@ -1,20 +1,18 @@
 import { Button, View } from "react-native";
-import { useStoreSelector, useTableSelector } from "../../hooks";
 
 import React from "react";
 import { SummaryText as TableSummaryText } from "../../components/tables";
+import { useSettings } from "../../hooks";
 
 function Preferences() {
-  const { changeStore } = useStoreSelector();
-  const { table, loading, changeTable } = useTableSelector();
+  const { reset, loading } = useSettings();
   return (
     <View>
-      {!loading && table && <TableSummaryText />}
+      {!loading && <TableSummaryText />}
       <Button
         title="초기화"
         onPress={() => {
-          changeStore(undefined);
-          changeTable(undefined);
+          reset();
         }}
       />
     </View>

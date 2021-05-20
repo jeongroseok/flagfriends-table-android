@@ -139,72 +139,35 @@ export const unoccupyTable = async ({ id }: Pick<Table, "id">) => {
   });
 };
 
-export const swapTableOccupation = async (
-  from: Pick<Table, "id">,
-  to: Pick<Table, "id">
-) => {
-  const fromTableId = from.id;
-  const toTableId = to.id;
-  tablesRef.firestore.runTransaction(async (transaction) => {
-    const fromRef = getTableById(fromTableId);
-    const fromDoc = await transaction.get(fromRef);
-    const from = fromDoc.data() as Omit<Table, "id">;
-
-    const toRef = getTableById(toTableId);
-
-    transaction.update(fromRef, {
-      status: "PREPARING",
-      occupation: firebase.firestore.FieldValue.delete() as any,
-    } as Partial<Table>);
-
-    transaction.update(toRef, {
-      status: "OCCUPIED",
-      occupation: from.occupation,
-    } as Partial<Table>);
-  });
-};
-
 export const orderByTableId = async (
   tableId: Table["id"],
-  order: Omit<Order, "createdAt" | "status">
-) => {
-  const { createdAt, status, ...rest } = order as Order;
-  const tableRef = getTableById(tableId);
-  await tableRef.firestore.runTransaction(async (transaction) => {
-    const tableDoc = await transaction.get(tableRef);
-    const table = tableDoc.data() as Table;
-
-    if (!table.occupation) {
-      throw new Error("invalid operation, unoccupied table.");
-    }
-    const occupation = produce(table.occupation, (draft) => {
-      draft.orders[nanoid()] = {
-        ...rest,
-        status: "PENDING",
-        createdAt: firebase.firestore.Timestamp.now(),
-      } as any;
-    });
-    transaction.update(tableRef, { occupation });
-  });
-};
-
-export const changeOrderStatus = async (
-  tableId: Table["id"],
-  orderId: keyof Occupation["orders"],
-  orderStatus: Order["status"]
+  orders: Omit<Order, "createdAt" | "status">[]
 ) => {
   const tableRef = getTableById(tableId);
   await tableRef.firestore.runTransaction(async (transaction) => {
     const tableDoc = await transaction.get(tableRef);
     const table = tableDoc.data() as Table;
-
     if (!table.occupation) {
       throw new Error("invalid operation, unoccupied table.");
     }
 
-    const occupation = produce(table.occupation, (draft) => {
-      draft.orders[orderId].status = orderStatus;
-    });
+    const occupation = table.occupation;
+    occupation.orders = {
+      ...occupation.orders,
+      ...Object.fromEntries(
+        orders.map((order) => {
+          const { createdAt, status, ...rest } = order as Order;
+          return [
+            nanoid(),
+            {
+              ...rest,
+              status: "PENDING",
+              createdAt: firebase.firestore.Timestamp.now(),
+            },
+          ];
+        })
+      ),
+    };
 
     transaction.update(tableRef, { occupation });
   });

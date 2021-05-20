@@ -1,38 +1,18 @@
-import {
-  Banner,
-  getBannerById,
-  listBannersByStoreId,
-} from "../firebase/banners";
-import {
-  useObservableStateFromFBColRef,
-  useObservableStateFromFBDocRef,
-} from "./utilities";
+import { useContext, useMemo } from "react";
 
-import { useMemo } from "react";
+import { AppContext } from "./apps";
+import { Banner } from "../firebase/banners";
 
 export type { Banner };
 
 /* Hooks */
-export function useAvailableBannersByStoreId(storeId: string) {
-  const [banners, loading, error] = useObservableStateFromFBColRef(
-    () => listBannersByStoreId(storeId),
-    [storeId]
-  );
-  return {
-    banners: useMemo(
-      () => banners.filter((b) => b.status == "SHOW"),
-      [banners]
-    ),
-    loading,
-    error,
-  };
+
+export function useBanners() {
+  const { banners } = useContext(AppContext);
+  return banners;
 }
 
 export function useBannerById(id: string) {
-  const [banner, loading, error] = useObservableStateFromFBDocRef(
-    () => getBannerById(id),
-    [id]
-  );
-
-  return { banner, loading, error };
+  const banners = useBanners();
+  return useMemo(() => banners.filter((b) => b.id === id)[0], [banners]);
 }

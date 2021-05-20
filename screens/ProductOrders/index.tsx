@@ -12,12 +12,11 @@ function ProductOrders() {
   const table = useTable();
 
   return (
-    <View
+    <ScrollView
       style={{
         display: "flex",
         backgroundColor: Colors.fancygray,
         paddingHorizontal: 20,
-        marginTop: 4,
       }}
     >
       <ProductOrderList table={table} />
@@ -56,7 +55,7 @@ function ProductOrders() {
           </View>
         ))}
       </View>
-    </View>
+    </ScrollView>
   );
 }
 export default ProductOrders;

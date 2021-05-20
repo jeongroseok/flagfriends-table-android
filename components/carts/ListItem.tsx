@@ -19,7 +19,7 @@ type Props = {
 function ListItem({ item, onChangeQuantity, onDelete }: Props) {
   const languageCode = useLanguageCode();
   const currencyCode = useCurrencyCode();
-  const { product, loading } = useProductById(item.productId);
+  const product = useProductById(item.productId);
   return (
     <View
       style={{

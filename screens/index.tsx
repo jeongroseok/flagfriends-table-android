@@ -1,8 +1,7 @@
-import { Text, View } from "react-native";
-import { useStoreSelector, useTableSelector } from "../hooks";
+import { useAppStatus, useSettings } from "../hooks";
 
+import { CenteredText } from "../components/app";
 import Constants from "expo-constants";
-import Landing from "./Landing";
 import Main from "./Main";
 import { NavigationContainer } from "@react-navigation/native";
 import Preferences from "./Preferences";
@@ -10,36 +9,22 @@ import ProductDetails from "./ProductDetails";
 import ProductOrders from "./ProductOrders";
 import Products from "./Products";
 import React from "react";
-import WebView from "react-native-webview";
+import Settings from "./Settings";
 import { createStackNavigator } from "@react-navigation/stack";
+import { useCommonSettings } from "../styles";
 
 const Stack = createStackNavigator();
 
 function Screens() {
-  const {
-    store,
-    loading: storeLoading,
-    error: storeError,
-  } = useStoreSelector();
-  const {
-    table,
-    loading: tableLoading,
-    error: tableError,
-  } = useTableSelector();
-  const loading = storeLoading || tableLoading;
-  const ok = store && table; // 변수명 바꿀 것
-  console.log(`store: ${store}, table: ${table}`);
-  if (loading) {
-    return <Text>loading</Text>;
-  }
+  const { fontsLoaded } = useCommonSettings();
+  const { settings, loading: settingsLoading } = useSettings();
+  const { loading: appLoading } = useAppStatus();
 
-  if (tableError || storeError) {
-    return (
-      <View>
-        <Text>store error:{JSON.stringify(storeError)}</Text>
-        <Text>table error:{JSON.stringify(tableError)}</Text>
-      </View>
-    );
+  const loading = !fontsLoaded || settingsLoading || appLoading;
+  const needsSettings = settings.storeId && settings.tableId;
+
+  if (loading) {
+    return <CenteredText>로딩 중...</CenteredText>;
   }
 
   return (
@@ -64,7 +49,7 @@ function Screens() {
           headerBackAllowFontScaling: false,
         }}
       >
-        {ok ? (
+        {needsSettings ? (
           <>
             <Stack.Screen
               name="main"
@@ -80,12 +65,12 @@ function Screens() {
             <Stack.Screen
               name="productOrders"
               component={ProductOrders}
-              options={{ title: "주문목록" }}
+              options={{ title: "주문기록" }}
             />
             <Stack.Screen name="preferences" component={Preferences} />
           </>
         ) : (
-          <Stack.Screen name="landing" component={Landing} />
+          <Stack.Screen name="settings" component={Settings} />
         )}
       </Stack.Navigator>
     </NavigationContainer>

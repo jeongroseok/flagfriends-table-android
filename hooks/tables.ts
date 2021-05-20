@@ -13,8 +13,8 @@ import { map, switchMap } from "rxjs/operators";
 import { useContext, useMemo } from "react";
 import { useObservable, useObservableState } from "observable-hooks";
 
+import { AppContext } from "./apps";
 import { Product } from "./products";
-import { TableContext } from "../providers/TableProvider";
 import { getProductById } from "../firebase/products";
 import { snapToData } from "rxfire/firestore";
 import { useObservableStateFromFBColRef } from "./utilities";
@@ -22,7 +22,7 @@ import { useObservableStateFromFBColRef } from "./utilities";
 export type { Table, TableOccupation, TableOrder };
 
 export function useTable() {
-  const { table } = useContext(TableContext);
+  const { table } = useContext(AppContext);
   return useMemo(() => {
     const ready = async () => await readyTable({ id: table!.id });
     const prepare = async () => await prepareTable({ id: table!.id });
@@ -30,16 +30,9 @@ export function useTable() {
     const unoccupy = async () => await unoccupyTable({ id: table!.id });
     const pay = async () => {};
     const order = async (
-      productId: Product["id"],
-      optionSelections: {
-        [optionId: string]: { [selectionId: string]: boolean };
-      }
+      orderItems: Omit<TableOrder, "createdAt" | "status">[]
     ) => {
-      await orderByTableId(table!.id, {
-        productId: productId,
-        optionSelections: optionSelections,
-        discounts: [],
-      });
+      await orderByTableId(table!.id, orderItems);
     };
 
     return {
@@ -52,10 +45,6 @@ export function useTable() {
       order,
     };
   }, [table]);
-}
-
-export function useTableSelector() {
-  return useContext(TableContext);
 }
 
 export function useAllTableSummariesByStoreId(storeId: string) {
