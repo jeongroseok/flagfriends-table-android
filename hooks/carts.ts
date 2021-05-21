@@ -1,9 +1,9 @@
 import { CartItem, cartItemsState } from "../states";
-import { map, switchMap } from "rxjs/operators";
 import { useObservable, useObservableState } from "observable-hooks";
 
 import { getProductById } from "../firebase/products";
 import produce from "immer";
+import { switchMap } from "rxjs/operators";
 import { useMemo } from "react";
 import { useRecoilState } from "recoil";
 

@@ -4,9 +4,8 @@ import {
   listProductsByStoreId,
 } from "../firebase/products";
 import { collection, doc } from "rxfire/firestore";
-import { combineLatest, of } from "rxjs";
 import { createContext, useContext, useState } from "react";
-import { map, merge, switchMap, tap } from "rxjs/operators";
+import { map, switchMap, tap } from "rxjs/operators";
 import { useObservable, useObservableState } from "observable-hooks";
 
 import { Banner } from "./banners";
@@ -17,6 +16,7 @@ import firebase from "firebase";
 import { getStoreById } from "../firebase/stores";
 import { getTableById } from "../firebase/tables";
 import { listBannersByStoreId } from "../firebase/banners";
+import { of } from "rxjs";
 import { useSettings } from "./settings";
 
 type AppContext = {

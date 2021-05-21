@@ -104,10 +104,10 @@ function CategorizedList({ categoryId, onProductPress }: Props) {
     return Object.entries(sections)
       .map(([categoryId, products]) => ({
         title: categoryLookup[categoryId].name[languageCode],
-        order: categoryLookup[categoryId].order,
+        priority: categoryLookup[categoryId].priority,
         data: products,
       }))
-      .sort((pc1, pc2) => pc1.order - pc2.order);
+      .sort((pc1, pc2) => pc1.priority - pc2.priority);
   }, [categories, products]);
 
   return (

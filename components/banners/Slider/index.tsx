@@ -4,7 +4,7 @@ import React, { useCallback, useEffect, useState } from "react";
 import BannerView from "../BannerView";
 import { CenteredText } from "../../app";
 import NavigationButton from "./NavigationButton";
-import { useBanners } from "../../../hooks/banners";
+import { useBanners } from "../../../hooks";
 
 type Props = {};
 
@@ -14,7 +14,6 @@ function Slider({}: Props) {
   const [index, setIndex] = useState(0);
 
   useEffect(() => {
-    console.log("새로운 배너 선택");
     setIndex(Math.floor(Math.random() * banners.length));
   }, [banners]);
 

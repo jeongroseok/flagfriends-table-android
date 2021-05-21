@@ -21,14 +21,6 @@ interface Option {
   defaultSelections: { [id: string]: boolean };
 }
 
-export interface ProductCategory {
-  readonly id: string;
-  readonly storeId: string;
-  readonly parentId?: ProductCategory["id"];
-  order: number;
-  name: { [code: string]: string };
-}
-
 export interface Product {
   readonly id: string;
   readonly storeId: string;
@@ -44,9 +36,15 @@ export interface Product {
   jobProcessIds: string[];
   recipe: string;
   prerequisiteIds: string[];
-  readonly createdAt:
-    | firebase.firestore.Timestamp
-    | firebase.firestore.FieldValue;
+  readonly createdAt: firebase.firestore.Timestamp;
+}
+
+export interface ProductCategory {
+  readonly id: string;
+  readonly storeId: string;
+  readonly parentId?: ProductCategory["id"];
+  priority: number;
+  name: { [code: string]: string };
 }
 
 const productConverter = {
@@ -86,7 +84,6 @@ const productCategoriesRef = firebase
   .firestore()
   .collection("productCategories")
   .withConverter(productCategoryConverter);
-const productStorageRef = firebase.storage().ref("products");
 
 export const listProductsByStoreId = (storeId: string) =>
   productsRef.where("storeId", "==", storeId);

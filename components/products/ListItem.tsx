@@ -135,7 +135,7 @@ function ListItem({ productSummary, onPress }: Props) {
         </Text>
       </View>
       {productSummary.badges.map((badge) => (
-        <ProductListItemBadge type={badge} />
+        <ProductListItemBadge key={badge.toString()} type={badge} />
       ))}
     </TouchableOpacity>
   );

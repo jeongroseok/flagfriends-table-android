@@ -53,7 +53,7 @@ function Products() {
         }}
       >
         {productCategories
-          .sort((pc1, pc2) => pc1.order - pc2.order)
+          .sort((pc1, pc2) => pc1.priority - pc2.priority)
           .map(({ id, name }) => (
             <Tab.Screen
               key={id}

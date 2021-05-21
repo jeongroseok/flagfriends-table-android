@@ -4,13 +4,16 @@ type Status = "PREPARING" | "OPEN" | "CLOSED";
 
 export interface Store {
   readonly id: string;
-  readonly createdAt:
-    | firebase.firestore.Timestamp
-    | firebase.firestore.FieldValue;
+  readonly createdAt: firebase.firestore.Timestamp;
   name: { [code: string]: string };
   description: { [code: string]: string };
   staffUids: string[];
   status: Status;
+  operationalHours: {
+    openAt: string;
+    closeAt: string;
+  };
+  message: string;
   // 주간 일정, 공휴일 일정, ...etc 추가
 }
 

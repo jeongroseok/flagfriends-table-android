@@ -9,7 +9,6 @@ import {
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Store } from "./stores";
 import { Table } from "./tables";
-import { async } from "rxjs";
 
 interface Settings {
   storeId: Store["id"] | undefined;
