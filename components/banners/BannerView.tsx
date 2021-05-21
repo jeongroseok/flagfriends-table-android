@@ -9,7 +9,7 @@ type Props = {
 function BannerView({ banner, ...props }: Props) {
   const table = useTable();
   const injectedJavascript = `window.__app__ = ${JSON.stringify({
-    storeId: banner.storeId,
+    storeId: table.storeId,
     tableId: table.id,
     bannerId: banner.id,
   })}`;
@@ -21,6 +21,7 @@ function BannerView({ banner, ...props }: Props) {
   return (
     <WebView
       {...props}
+      injectedJavaScript={injectedJavascript}
       injectedJavaScriptBeforeContentLoaded={injectedJavascript}
       source={source}
     />
