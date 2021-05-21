@@ -69,10 +69,13 @@ export function useAppProvider() {
             );
           }
           return of(undefined);
-        }),
-        tap(() => setStoreLoading(false))
+        })
       ),
     [settings.storeId]
+  );
+  const store = useObservableState(store$);
+  useObservableState(
+    useObservable(() => store$.pipe(tap(() => setStoreLoading(false))), [])
   );
 
   const [tableLoading, setTableLoading] = useState(true);
@@ -87,10 +90,13 @@ export function useAppProvider() {
             );
           }
           return of(undefined);
-        }),
-        tap(() => setTableLoading(false))
+        })
       ),
     [settings.tableId]
+  );
+  const table = useObservableState(table$);
+  useObservableState(
+    useObservable(() => table$.pipe(tap(() => setTableLoading(false))), [])
   );
 
   const [bannersLoading, setBannersLoading] = useState(true);
@@ -105,10 +111,13 @@ export function useAppProvider() {
             );
           }
           return of([]);
-        }),
-        tap(() => setBannersLoading(false))
+        })
       ),
     [settings.storeId]
+  );
+  const banners = useObservableState(banners$);
+  useObservableState(
+    useObservable(() => banners$.pipe(tap(() => setBannersLoading(false))), [])
   );
 
   const [productCategoriesLoading, setProductCategoriesLoading] =
@@ -129,6 +138,14 @@ export function useAppProvider() {
       ),
     [settings.storeId]
   );
+  const productCategories = useObservableState(productCategories$);
+  useObservableState(
+    useObservable(
+      () =>
+        productCategories$.pipe(tap(() => setProductCategoriesLoading(false))),
+      []
+    )
+  );
 
   const [productsLoading, setProductsLoading] = useState(true);
   const products$ = useObservable(
@@ -142,10 +159,16 @@ export function useAppProvider() {
             );
           }
           return of([]);
-        }),
-        tap(() => setProductsLoading(false))
+        })
       ),
     [settings.storeId]
+  );
+  const products = useObservableState(products$);
+  useObservableState(
+    useObservable(
+      () => products$.pipe(tap(() => setProductsLoading(false))),
+      []
+    )
   );
 
   const loading =
@@ -156,11 +179,11 @@ export function useAppProvider() {
     productsLoading;
 
   return {
-    store: useObservableState(store$),
-    table: useObservableState(table$),
-    banners: useObservableState(banners$, []),
-    productCategories: useObservableState(productCategories$, []),
-    products: useObservableState(products$, []),
+    store,
+    table,
+    banners,
+    productCategories,
+    products,
     loading,
   };
 }
