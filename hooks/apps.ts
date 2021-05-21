@@ -138,7 +138,7 @@ export function useAppProvider() {
         switchMap(([storeId]) => {
           if (storeId) {
             return collection(listProductsByStoreId(storeId)).pipe(
-              transformSnapshotsToArray<ProductCategory>()
+              transformSnapshotsToArray<Product>()
             );
           }
           return of([]);
