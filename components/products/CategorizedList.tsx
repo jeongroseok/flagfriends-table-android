@@ -97,8 +97,18 @@ function CategorizedList({ categoryId, onProductPress }: Props) {
 
     for (const product of products) {
       if (!categoryIds.includes(product.categoryId)) continue;
+      if (product.status === "HIDDEN") continue;
       sections[product.categoryId] = sections[product.categoryId] || [];
       sections[product.categoryId].push(product);
+    }
+
+    for (const categoryId in sections) {
+      sections[categoryId].sort((p1, p2) => {
+        if (p1.name[languageCode] < p2.name[languageCode]) return -1;
+        if (p1.name[languageCode] > p2.name[languageCode]) return 1;
+        return 0;
+      });
+      console.log(sections[categoryId]);
     }
 
     return Object.entries(sections)
