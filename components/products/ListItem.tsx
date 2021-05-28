@@ -29,13 +29,13 @@ function ProductListItemBadge({ type }: { type: Product["badges"][0] }) {
   let imageSrc = null;
   switch (type) {
     case "BEST":
-      imageSrc = badge03;
-      break;
-    case "NEW":
       imageSrc = badge01;
       break;
     case "RECOMMENDED":
       imageSrc = badge02;
+      break;
+    case "NEW":
+      imageSrc = badge03;
       break;
     default:
       imageSrc = null;
