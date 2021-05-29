@@ -117,18 +117,24 @@ export const occupyTable = async ({ id }: Pick<Table, "id">) => {
   return occupation.id;
 };
 
+// 수정한 부분 admin에도 적용하기
 export const unoccupyTable = async ({ id }: Pick<Table, "id">) => {
   const ref = getTableById(id);
   await tablesRef.firestore.runTransaction(async (transaction) => {
     const doc = await transaction.get(ref);
-    const { occupation } = doc.data() as Table;
+    const table = doc.data() as Table;
+    if (!table.occupation)
+      throw new Error("invalid operation, empty occupation");
 
-    if (!occupation) throw new Error("invalid operation, empty occupation");
+    const { id, ...occupation } = table.occupation as Occupation;
+
     transaction.set(occupationHistoryRef.doc(), {
       ...occupation,
-      orders: Object.entries(occupation.orders).map(
-        ([id, { status, ...rest }]) => ({ ...rest })
-      ),
+      storeId: table.storeId,
+      tableId: id,
+      orders: Object.entries(occupation.orders).map(([id, { ...rest }]) => ({
+        ...rest,
+      })),
     });
 
     transaction.update(ref, {
