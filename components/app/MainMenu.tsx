@@ -1,40 +1,46 @@
-import { Pressable, Text } from "react-native";
+import { Alert, AlertButton, Text } from "react-native";
+import React, { useCallback } from "react";
 
 import CircularMenu from "./CircularMenu";
 import IconBill from "../../assets/ficon13.svg";
 import IconCall from "../../assets/ficon9.svg";
-import IconGame from "../../assets/ficon3.svg";
 import IconGift from "../../assets/ficon4.svg";
 import IconJukebox from "../../assets/ficon11.svg";
 import IconLogo from "../../assets/ficon1.svg";
 import IconOrder from "../../assets/ficon10.svg";
-import React from "react";
-import { TouchableOpacity } from "react-native-gesture-handler";
 import styled from "styled-components/native";
+import { useCallingAlert } from "../../hooks";
+import { useNavigation } from "@react-navigation/native";
 
-const MenuItem = styled.Pressable`
+const MainMenuItem = styled.TouchableOpacity`
   display: flex;
+  flex-direction: column;
   justify-content: center;
   align-items: center;
+  opacity: ${(props) => (props.disabled ? 0.3 : 1.0)};
 `;
 
-const DisabledMenuItem = styled.Pressable`
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  opacity: 0.3;
-`;
+type Props = {};
+function MainMenu({}: Props) {
+  const navigation = useNavigation();
+  const { alert } = useCallingAlert();
 
-enum MainMenuItem {
-  직원호출,
-  주문목록,
-  제품주문,
-}
-type Props = {
-  onPress?: (item: MainMenuItem) => void;
-  onLongPress?: () => void;
-};
-function MainMenu({ onPress, onLongPress }: Props) {
+  const handleHiddenOperation = useCallback(() => {
+    const buttons: AlertButton[] = [
+      { text: "취소", style: "cancel" },
+      {
+        text: "확인",
+        style: "default",
+        onPress: () => navigation.navigate("preferences"),
+      },
+    ];
+    Alert.alert(
+      "경고",
+      "테블릿 설정 기능입니다.\n함부로 쓰면 안돼요!😥😥😥",
+      buttons
+    );
+  }, []);
+
   return (
     <CircularMenu
       style={{
@@ -48,38 +54,28 @@ function MainMenu({ onPress, onLongPress }: Props) {
       }}
       radius={128}
       center={<IconLogo width={60} height={60} fill={"white"} />}
-      onLongPress={onLongPress}
+      onLongPress={handleHiddenOperation}
     >
-      <TouchableOpacity onPress={() => onPress?.(MainMenuItem.직원호출)}>
-        <MenuItem>
-          <IconCall width={50} height={50} fill="black" />
-          <Text>직원 호출</Text>
-        </MenuItem>
-      </TouchableOpacity>
-      <TouchableOpacity onPress={() => onPress?.(MainMenuItem.주문목록)}>
-        <MenuItem>
-          <IconBill width={50} height={50} fill="black" />
-          <Text>주문 목록</Text>
-        </MenuItem>
-      </TouchableOpacity>
-      <TouchableOpacity onPress={() => onPress?.(MainMenuItem.제품주문)}>
-        <MenuItem>
-          <IconOrder width={50} height={50} fill="black" />
-          <Text>제품 주문</Text>
-        </MenuItem>
-      </TouchableOpacity>
-      <TouchableOpacity>
-        <DisabledMenuItem>
-          <IconJukebox width={50} height={50} fill="black" />
-          <Text>노래 선곡</Text>
-        </DisabledMenuItem>
-      </TouchableOpacity>
-      <TouchableOpacity>
-        <DisabledMenuItem>
-          <IconGift width={50} height={50} fill="black" />
-          <Text>테이블 메세징</Text>
-        </DisabledMenuItem>
-      </TouchableOpacity>
+      <MainMenuItem onPress={alert}>
+        <IconCall width={50} height={50} fill="black" />
+        <Text>직원 호출</Text>
+      </MainMenuItem>
+      <MainMenuItem onPress={() => navigation.navigate("productOrders")}>
+        <IconBill width={50} height={50} fill="black" />
+        <Text>주문 목록</Text>
+      </MainMenuItem>
+      <MainMenuItem onPress={() => navigation.navigate("products")}>
+        <IconOrder width={50} height={50} fill="black" />
+        <Text>제품 주문</Text>
+      </MainMenuItem>
+      <MainMenuItem disabled>
+        <IconJukebox width={50} height={50} fill="black" />
+        <Text>노래 선곡</Text>
+      </MainMenuItem>
+      <MainMenuItem disabled>
+        <IconGift width={50} height={50} fill="black" />
+        <Text>테이블 메세징</Text>
+      </MainMenuItem>
     </CircularMenu>
   );
 }

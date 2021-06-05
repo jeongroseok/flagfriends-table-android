@@ -1,19 +1,11 @@
 import {} from "react-native-gesture-handler";
 
-import {
-  Alert,
-  AlertButton,
-  Button,
-  StyleSheet,
-  Text,
-  View,
-} from "react-native";
-import React, { useCallback } from "react";
+import { Button, StyleSheet, Text, View } from "react-native";
 import { useStore, useTable } from "../hooks";
 
 import { MainMenu as AppMainMenu } from "../components/app";
 import { Slider as BannerSlider } from "../components/banners";
-import firebase from "firebase";
+import React from "react";
 import { useNavigation } from "@react-navigation/native";
 
 function Main() {
@@ -21,41 +13,12 @@ function Main() {
   const table = useTable();
   const navigation = useNavigation();
 
-  const handleHiddenOperation = useCallback(() => {
-    const buttons: AlertButton[] = [
-      { text: "취소", style: "cancel" },
-      {
-        text: "확인",
-        style: "default",
-        onPress: () => navigation.navigate("preferences"),
-      },
-    ];
-    Alert.alert(
-      "경고",
-      "테블릿 설정 기능입니다.\n함부로 쓰면 안돼요!😥😥😥",
-      buttons
-    );
-  }, []);
-
-  const handleCreateCalling = useCallback(
-    async (message) => {
-      const callingsRef = firebase.database().ref("callings");
-      await callingsRef.push({
-        storeId: store.id,
-        tableId: table.id,
-        message,
-        createdAt: firebase.database.ServerValue.TIMESTAMP,
-      });
-    },
-    [table]
-  );
-
   if (!store || !table) {
     return (
       <View>
         <Text>설정 필요!</Text>
         <Button
-          title="설정"
+          title="설정하기"
           onPress={() => navigation.navigate("preferences")}
         />
       </View>
@@ -65,34 +28,7 @@ function Main() {
   return (
     <View style={styles.container}>
       <BannerSlider />
-      <AppMainMenu
-        onLongPress={handleHiddenOperation}
-        onPress={(item) => {
-          switch (item) {
-            case 0:
-              (() => {
-                const buttons: AlertButton[] = [
-                  { text: "취소", style: "cancel" },
-                  {
-                    text: "확인",
-                    style: "default",
-                    onPress: () => handleCreateCalling("호출"),
-                  },
-                ];
-
-                Alert.alert("알림", "호출하시겠습니까?", buttons);
-              })();
-              break;
-            case 1:
-              navigation.navigate("productOrders");
-              break;
-            case 2:
-              navigation.navigate("products");
-              break;
-          }
-        }}
-      />
-      {/* <StatusBar style="auto" /> */}
+      <AppMainMenu />
     </View>
   );
 }
