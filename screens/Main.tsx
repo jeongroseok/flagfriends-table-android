@@ -29,8 +29,8 @@ function Main() {
   return (
     <View style={styles.container}>
       <BannerSlider />
-      <AppMainMenu />
       <AppVersionText style={styles.versionText} />
+      <AppMainMenu />
     </View>
   );
 }
