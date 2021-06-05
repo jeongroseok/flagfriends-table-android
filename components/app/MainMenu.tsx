@@ -74,7 +74,7 @@ function MainMenu({}: Props) {
       </MainMenuItem>
       <MainMenuItem disabled>
         <IconGift width={50} height={50} fill="black" />
-        <Text>테이블 메세징</Text>
+        <Text>메가폰(테스트)</Text>
       </MainMenuItem>
     </CircularMenu>
   );
