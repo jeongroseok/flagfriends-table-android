@@ -1,12 +1,12 @@
 import React from "react";
 import { Text } from "react-native";
 
-function AppVersionText() {
+function VersionText(props: Text["props"]) {
   return (
-    <Text style={{ position: "absolute", bottom: 0 }}>
-      updated at 2021-01-04
+    <Text {...props} style={[props.style, { fontSize: 11 }]}>
+      updated at 2021-06-06
     </Text>
   );
 }
 
-export default AppVersionText;
+export default VersionText;

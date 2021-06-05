@@ -1,9 +1,10 @@
-import {} from "react-native-gesture-handler";
-
+import {
+  MainMenu as AppMainMenu,
+  VersionText as AppVersionText,
+} from "../components/app";
 import { Button, StyleSheet, Text, View } from "react-native";
 import { useStore, useTable } from "../hooks";
 
-import { MainMenu as AppMainMenu } from "../components/app";
 import { Slider as BannerSlider } from "../components/banners";
 import React from "react";
 import { useNavigation } from "@react-navigation/native";
@@ -29,6 +30,7 @@ function Main() {
     <View style={styles.container}>
       <BannerSlider />
       <AppMainMenu />
+      <AppVersionText style={styles.versionText} />
     </View>
   );
 }
@@ -37,6 +39,11 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: "#ECF0F100",
+  },
+  versionText: {
+    position: "absolute",
+    bottom: 0,
+    right: 0,
   },
 });
 
