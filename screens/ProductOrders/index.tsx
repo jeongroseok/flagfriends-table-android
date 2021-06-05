@@ -1,15 +1,19 @@
 import { Text, View } from "react-native";
 
+import { CenteredText } from "../../components/app";
 import { Colors } from "../../styles";
 import { List as ProductOrderList } from "../../components/products/orders";
 import React from "react";
 import { ScrollView } from "react-native-gesture-handler";
-import { useNavigation } from "@react-navigation/native";
+import moment from "moment";
 import { useTable } from "../../hooks";
 
 function ProductOrders() {
-  const navigation = useNavigation();
   const table = useTable();
+
+  if (!table.occupation) {
+    return <CenteredText>주문 내역이 존재하지 않습니다.</CenteredText>;
+  }
 
   return (
     <ScrollView
@@ -34,6 +38,12 @@ function ProductOrders() {
           {
             text: "결제는 카운터에서 진행해 주십시오.",
             highlight: true,
+          },
+          {
+            text: `경과시간: ${moment(
+              table.occupation.createdAt.toDate() || new Date()
+            ).fromNow(false)}`,
+            highlight: false,
           },
         ].map(({ text, highlight }, index) => (
           <View
