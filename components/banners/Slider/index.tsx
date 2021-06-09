@@ -15,7 +15,7 @@ function Slider({}: Props) {
 
   useEffect(() => {
     setIndex(Math.floor(Math.random() * banners.length));
-  }, [banners]);
+  }, [banners, setIndex]);
 
   const onLayout = useCallback(({ nativeEvent }: LayoutChangeEvent) => {
     const { width, height } = nativeEvent.layout;
@@ -28,7 +28,7 @@ function Slider({}: Props) {
 
   return (
     <View onLayout={onLayout} style={{ flex: 1 }}>
-      {size && (
+      {size && banners[index] && (
         <BannerView
           style={{ ...size, backgroundColor: "transparent" }}
           banner={banners[index]}
