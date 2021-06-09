@@ -12,6 +12,11 @@ export function useBanners() {
   return banners;
 }
 
+export function useAvailableBanners() {
+  const { banners } = useContext(AppContext);
+  return useMemo(() => banners.filter((b) => b.status === "SHOW"), [banners]);
+}
+
 export function useBannerById(id: string) {
   const banners = useBanners();
   return useMemo(() => banners.filter((b) => b.id === id)[0], [banners]);

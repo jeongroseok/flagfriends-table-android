@@ -4,13 +4,13 @@ import React, { useCallback, useEffect, useState } from "react";
 import BannerView from "../BannerView";
 import { CenteredText } from "../../app";
 import NavigationButton from "./NavigationButton";
-import { useBanners } from "../../../hooks";
+import { useAvailableBanners } from "../../../hooks";
 
 type Props = {};
 
 function Slider({}: Props) {
   const [size, setSize] = useState<{ width: number; height: number }>();
-  const banners = useBanners();
+  const banners = useAvailableBanners();
   const [index, setIndex] = useState(0);
 
   useEffect(() => {
