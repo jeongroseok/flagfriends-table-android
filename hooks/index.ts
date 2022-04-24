@@ -6,3 +6,4 @@ export * from "./settings";
 export * from "./apps";
 export * from "./banners";
 export * from "./callings";
+export * from "./timer";

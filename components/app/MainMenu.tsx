@@ -68,7 +68,7 @@ function MainMenu({}: Props) {
         <IconOrder width={50} height={50} fill="black" />
         <Text>제품 주문</Text>
       </MainMenuItem>
-      <MainMenuItem disabled>
+      <MainMenuItem onPress={() => navigation.navigate("songs")} >
         <IconJukebox width={50} height={50} fill="black" />
         <Text>노래 선곡</Text>
       </MainMenuItem>

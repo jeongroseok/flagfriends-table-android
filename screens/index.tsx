@@ -8,6 +8,7 @@ import Preferences from "./Preferences";
 import ProductDetails from "./ProductDetails";
 import ProductOrders from "./ProductOrders";
 import Products from "./Products";
+import Songs from "./Songs";
 import React from "react";
 import Settings from "./Settings";
 import { createStackNavigator } from "@react-navigation/stack";
@@ -66,6 +67,11 @@ function Screens() {
               name="productOrders"
               component={ProductOrders}
               options={{ title: "주문기록" }}
+            />
+            <Stack.Screen
+              name="songs"
+              component={Songs}
+              options={{title: "노래선곡"}}
             />
             <Stack.Screen name="preferences" component={Preferences} />
           </>
