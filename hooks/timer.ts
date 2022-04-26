@@ -1,7 +1,8 @@
 import { useState, useRef, useCallback } from "react";
 
-export function useTimer(initialValue: number) {
-    const [second, setSecond] = useState(initialValue);
+export function useTimer(endTime: number) {
+    const nowTime = new Date().getTime();
+    const [leftTime, setLeftTime] = useState(endTime - nowTime); //남은 시간
     const intervalRef: any = useRef(null);
 
     const start = useCallback(() => {
@@ -9,7 +10,11 @@ export function useTimer(initialValue: number) {
             return;
         }
         intervalRef.current = setInterval(() => {
-            setSecond(c => c - 1);
+            let nownow = new Date().getTime();
+            let cal = endTime - nownow;
+            setLeftTime(cal);
+
+
         }, 1000);
     }, []);
 
@@ -21,11 +26,5 @@ export function useTimer(initialValue: number) {
         intervalRef.current = null;
     }, []);
 
-    const reset = useCallback(() => {
-        setSecond(initialValue);
-    }, []);
-
-
-    return { second, start, stop, reset };
-
+    return { leftTime, start, stop };
 }
