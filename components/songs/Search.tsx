@@ -1,8 +1,9 @@
-import React, { useState, useEffect , useRef} from "react";
+import React, { useState, useEffect , useRef, useCallback} from "react";
 import { View, TextInput, TouchableOpacity, Text, StyleSheet, Alert } from "react-native"
 
 import SearchIcon from "../../assets/search.svg";
 import BackIcon from "../../assets/back.svg";
+import { useSong } from "../../hooks/songs";
 
 interface autoDatas {
     brand: string;
@@ -15,6 +16,7 @@ interface autoDatas {
 }
 
 function Search() {
+    const song = useSong();
     const [mode, setMode] = useState('');
 	const [keyword, setKeyword] = useState<string>("");
     const [keyItems, setKeyItems] = useState<autoDatas[]>([]);
@@ -50,11 +52,24 @@ function Search() {
         console.log(keyItems);
     }
 
+    const handleSong = useCallback(async (songData:autoDatas) => {
+        // 여기서부터!!!
+        // await song.request({
+        //     id: '11',
+        //     no: songData.no,
+        //     singer: songData.singer,
+        //     title: songData.title,
+        //     tableId: "11",
+        //     storeId: '11',
+            
+        // })
+    }, [song]);
+
     const songRequest = (data:autoDatas) => {
         Alert.alert('이 노래로 신청할까요?', '제목 : ' + data.title + '\n가수 : ' + data.singer, [
             {
                 text: '신청하기',
-                onPress: () => console.log('')
+                onPress: () => handleSong(data)
             },
             {
                 text: '취소',
