@@ -1,22 +1,45 @@
 import React, { useState, useEffect } from "react";
 import { View, Text } from "react-native";
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 import { useTimer } from "../../hooks"
 import HeartIcon from "../../assets/heart.svg";
 
+const loadTime = async() => {
+    try {
+        const value:any = await AsyncStorage.getItem('endTime');        
+        return (parseInt(value));
+    } catch(e) {
+        console.log("asyncStroage에서 time 못 불러옴ㅠㅠ");
+        return new Date().getTime() + 180000;
+    }
+}
+
+const saveTime = async(endTime:number) => {
+    try {
+        await AsyncStorage.setItem('endTime', endTime.toString());
+    } catch(e) {
+        console.log("asyncStorage에 등록하는거 실패해쏘ㅠㅠ");
+    }
+}
+
+
 function HeartTimer(props:any) {
-    const [time, setTime] = useState(180);
-    const { second, start, stop, reset} = useTimer(time);
-    const [count, setCount] = useState(props.count);
+    let dateTime = new Date().getTime() + 180000
+    const [time, setTime] = useState(dateTime); // 끝나는 시간
+    const { leftTime, start, stop} = useTimer(time);
+    const [songCount, setSongCount] = useState(0); // 노래 신청 횟수
 
     useEffect(() => {
-        // 0초 되면 하트 채우기
-        if (second <= 0  && props.count < 3) {
-            props.getHeart(props.count + 1);
-            setTime(c => c + 60);
-            reset();
+        // 0초 되고 하트 개수가 3개보다 적으면 하트 채우기
+        if (leftTime <= 0  && props.count < 3) {
+            props.getHeart(props.count + 1); //하트 1개 늘리기
+            let etime = new Date().getTime() +10000+ (60000 * songCount) //지금 시간 + 3분 + 노래신청횟수 * 1분
+            setTime(etime);
+            saveTime(etime);
+            setSongCount(c => c+1);
         }
-    }, [second]);
+    }, [leftTime,songCount]);
 
     useEffect(() => {
         // 하트 비워지면 타이머 돌아가기
@@ -27,6 +50,11 @@ function HeartTimer(props:any) {
             stop();
         }
     }, [props.count]);
+
+    useEffect(() => {
+        let res:any = loadTime();
+        setTime(res);        
+    }, [])
 
     return (
         <View >
@@ -40,8 +68,8 @@ function HeartTimer(props:any) {
                 <HeartIcon width={50} height={50} fill={props.count >= 3 ? 'tomato': 'grey'} />
             </View>
 
-            {count !== 3 &&
-                <Text style={{textAlign: 'center'}}> {Math.floor(second / 60)} : {second % 60} </Text>
+            {props.count !== 3 &&
+                <Text style={{textAlign: 'center'}}> {leftTime} </Text>
             }
             
         </View>
