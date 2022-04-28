@@ -25,16 +25,27 @@ const saveTime = async(endTime:number) => {
 
 
 function HeartTimer(props:any) {
-    let dateTime = new Date().getTime() + 180000
+    // let dateTime = new Date().getTime() + 180000;
+    let dateTime: any = loadTime();
     const [time, setTime] = useState(dateTime); // 끝나는 시간
     const { leftTime, start, stop} = useTimer(time);
     const [songCount, setSongCount] = useState(0); // 노래 신청 횟수
+    console.log('첫번쨰랜더',time);
+    
+    useEffect(() => {
+        (async () => {
+            let res:any = await loadTime();    
+            setTime(res);
+            console.log(time);
+            
+        })();
+    }, [time])
 
     useEffect(() => {
         // 0초 되고 하트 개수가 3개보다 적으면 하트 채우기
         if (leftTime <= 0  && props.count < 3) {
             props.getHeart(props.count + 1); //하트 1개 늘리기
-            let etime = new Date().getTime() +10000+ (60000 * songCount) //지금 시간 + 3분 + 노래신청횟수 * 1분
+            let etime = new Date().getTime() +180000+ (60000 * songCount) //지금 시간 + 3분 + 노래신청횟수 * 1분
             setTime(etime);
             saveTime(etime);
             setSongCount(c => c+1);
@@ -51,10 +62,7 @@ function HeartTimer(props:any) {
         }
     }, [props.count]);
 
-    useEffect(() => {
-        let res:any = loadTime();
-        setTime(res);        
-    }, [])
+    
 
     return (
         <View >
@@ -69,7 +77,7 @@ function HeartTimer(props:any) {
             </View>
 
             {props.count !== 3 &&
-                <Text style={{textAlign: 'center'}}> {leftTime} </Text>
+                <Text style={{textAlign: 'center'}}> {(Math.floor(leftTime / (1000 * 60)) % 60)} : {(Math.floor(leftTime / 1000) % 60)}</Text>
             }
             
         </View>
